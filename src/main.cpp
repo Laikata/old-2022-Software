@@ -63,6 +63,36 @@ void displayInfo()
     Serial.print(F("INVALID"));
   }
 
+  Serial.print(F(" "));
+
+  Serial.print(F("Altitude:"));
+  if (gps.altitude.isValid()){
+    Serial.print(gps.altitude.meters());
+  }
+  else {
+    Serial.print(F("INVALID"));
+  }
+
+  Serial.print(F(" "));
+
+  Serial.print(F("Satellites:"));
+  if (gps.satellites.isValid()){
+    Serial.print(gps.satellites.value());
+  }
+  else {
+    Serial.print(F("INVALID"));
+  }
+
+  Serial.print(F(" "));
+
+  Serial.print(F("course:"));
+  if (gps.course.isValid()){
+    Serial.print(gps.course.deg());
+  }
+  else {
+    Serial.print(F("INVALID"));
+  }
+
   Serial.println();
 }
 
