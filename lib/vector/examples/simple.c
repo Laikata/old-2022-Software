@@ -16,5 +16,10 @@ int main(){
     // Subtract both vectors and save the result as a new vector
     vec3_t *result = vec3_sub(vec, vec2);
 
+    // It's always nice to free allocated memory
+    vec3_free(vec);
+    vec3_free(vec2);
+    vec3_free(result);
+
     return 0;
 }
