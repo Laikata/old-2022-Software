@@ -4,4 +4,5 @@
 #include <vector.h>
 
 vec3_t *getPosition();
-void gpsInit()
+int getSatellites();
+void gpsInit();
