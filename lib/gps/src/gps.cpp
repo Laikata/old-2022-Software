@@ -19,7 +19,10 @@ vec3_t *gps_position(){
     return pos;
 }
 
+int gps_satellites(){
+  return gps.satellites.value();
+}
+
 void gps_init(){
-  Serial.begin(115200);
   ss.begin(GPSBaud);
 }
