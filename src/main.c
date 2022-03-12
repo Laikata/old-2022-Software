@@ -7,6 +7,8 @@ vec3_t *g_destCord = NULL_VEC3;
 
 void setup(){
     g_destCord = vec3_init();
+
+    gps_init();
 }
 
 void loop(){
