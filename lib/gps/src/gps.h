@@ -1,5 +1,7 @@
 #pragma once
 #include <inttypes.h>
 #include <stddef.h>
+#include <vector.h>
 
-int * getPosition();
+vec3_t *getPosition();
+void gpsInit()
