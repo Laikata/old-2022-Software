@@ -1,5 +1,7 @@
 #pragma once
 
+#define NULL_VEC3 (vec3_t *)0
+
 typedef struct VEC3_STRUCT {
     float x;
     float y;
