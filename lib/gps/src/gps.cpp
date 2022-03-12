@@ -3,6 +3,7 @@
 #include <TinyGPSPlus.h>
 #include <vector.h>
 #include <SoftwareSerial.h>
+#include <stdint.h>
 
 static const int RXPin = D5, TXPin = 3;
 static const uint32_t GPSBaud = 9600;
@@ -13,12 +14,12 @@ TinyGPSPlus gps;
 // The serial connection to the GPS device
 SoftwareSerial ss(RXPin, TXPin);
 
-vec3_t *getPosition(){
+vec3_t *gps_position(){
     vec3_t *pos = vec3_init(gps.location.lng(), gps.location.lat(), gps.altitude.meters());
     return pos;
 }
 
-void gpsInit(){
+void gps_init(){
   Serial.begin(115200);
   ss.begin(GPSBaud);
 }
