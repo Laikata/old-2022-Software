@@ -5,7 +5,8 @@ SoftwareSerial ss(10,11);
 
 void comms_init() {
 	Serial.begin(9600);
-	Serial.write("AT+P8");
+	// This won't work unless SET pin is HIGH
+	//Serial.write("AT+P8");
 }
 
 void send(uint8_t data[], uint16_t data_length){
