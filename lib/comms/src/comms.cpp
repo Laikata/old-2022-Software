@@ -11,7 +11,7 @@ void comms_init() {
 void send(uint8_t data[], uint16_t data_length){
     
 	// SYN char + header + data + crc32 checksum
-	size_t packet_size = 1 + 2 + data_length + 4;
+	uint16_t packet_size = 1 + 2 + data_length + 4;
 	uint8_t packet[packet_size];
 
 	packet[0] = 0x16;
@@ -59,7 +59,7 @@ int recv(char *data[]) {
 
 	if (checksum != crc32(packet_data, packet_size)) {
 		// Checksums do not match!
-		Serial.println(checksum, HEX);
+		Serial.println(crc32(packet_data, packet_size));
 		return 1;
 	}
 
