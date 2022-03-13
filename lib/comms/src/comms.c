@@ -29,7 +29,7 @@ void send(uint8_t data[], uint16_t data_length){
 	//Serial.write(packet, packet_size);
 }
 
-int read(char *data[]) {
+int recv(char *data[]) {
 	uint8_t header[2];
 	//Serial.readBytes(header, 2);
 	uint16_t packet_size = (uint16_t) header[0] + 
