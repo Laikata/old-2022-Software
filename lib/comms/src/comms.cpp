@@ -59,6 +59,7 @@ int recv(char *data[]) {
 
 	if (checksum != crc32(packet_data, packet_size)) {
 		// Checksums do not match!
+		Serial.println(checksum);
 		Serial.println(crc32(packet_data, packet_size));
 		return 1;
 	}
