@@ -1,3 +1,7 @@
+// WARNING: This file WON'T compile with current settings as it redefines setup() and loop()
+// Take a look at commit 723288a9bfd032b74af433fb4bc791f2669dbb0b (https://github.com/Laikata/Software/commit/723288a9bfd032b74af433fb4bc791f2669dbb0b)
+// If you want this file to compile remove it from src_filter in platformio.ini
+
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <Servo.h>
