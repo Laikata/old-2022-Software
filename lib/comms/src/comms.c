@@ -1,8 +1,4 @@
 #include "comms.h"
-#include <inttypes.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <Arduino.h>
 
 void send(uint8_t data[], uint16_t data_length){
     
