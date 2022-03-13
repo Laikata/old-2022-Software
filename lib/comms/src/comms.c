@@ -12,57 +12,48 @@ void send(uint8_t data[], uint16_t data_length){
 
 	packet[0] = 0x16;
 
-	packet[1] = data_length & 0x00ff;
-	packet[2] = data_length & 0xff00 >> 8;
+	packet[1] = (data_length >> 8) & 0xff;
+	packet[2] = data_length & 0xff;
 
 	for (int i = 0; i < data_length; i++) {
 		packet[i + 3] = data[i];
 	}
 
-	// TODO: Make the table a const in the header
-	const uint32_t* crc_table = make_crc_table();
+	uint32_t checksum = crc32(data, data_length);
 
-	//Maybe add the whole packet?
-	uint32_t checksum = crc32(data, data_length, crc_table);
+	packet[2 + data_length + 1] = (checksum >> 24) & 0xff;
+	packet[2 + data_length + 2] = (checksum >> 16) & 0xff;
+	packet[2 + data_length + 3] = (checksum >> 8) & 0xff;
+	packet[2 + data_length + 4] = checksum & 0xff;
 
-	packet[2 + data_length + 1] = checksum & 0x000000ff;
-	packet[2 + data_length + 2] = checksum & 0x0000ff00 >> 8;
-	packet[2 + data_length + 3] = checksum & 0x00ff0000 >> 16;
-	packet[2 + data_length + 4] = checksum & 0xff000000 >> 24;
-
-	Serial.write(packet, packet_size);
+	//Serial.write(packet, packet_size);
 }
 
 int read(char *data[]) {
 	uint8_t header[2];
-	Serial.readBytes(header, 2);
-
-	//TODO: This should work
+	//Serial.readBytes(header, 2);
 	uint16_t packet_size = (uint16_t) header[0] + 
 						   ( (uint16_t) header[1] << 8);
-	uint8_t packet_data[packet_size];
-	Serial.readBytes(packet_data, packet_size);
+
+	uint8_t packet_data[packet_size + 1];
+	//Serial.readBytes(packet_data, packet_size);
+	packet_data[packet_size] = '\0';
 
 	uint8_t crc32_buffer[4];
-	Serial.readBytes(crc32_buffer, 4);
-	uint32_t checksum = (uint32_t) crc32_buffer[0] +
-						( (uint32_t) crc32_buffer[1] << 8) +
-						( (uint32_t) crc32_buffer[2] << 16) +
-						( (uint32_t) crc32_buffer[3] << 24);
+	//Serial.readBytes(crc32_buffer, 4);
+	uint32_t checksum = (crc32_buffer[0] << 24) +
+						(crc32_buffer[1] << 16) +
+						(crc32_buffer[2] << 8) +
+						crc32_buffer[3];
 
-	// TODO: Make the table a const in the header
-	const uint32_t* crc_table = make_crc_table();
 
-	if (checksum != crc32(packet_data, packet_size, crc_table)) {
+	if (checksum != crc32(packet_data, packet_size)) {
 		// Checksums do not match!
 		return 1;
 	}
 
-	char* result = malloc((packet_size + 1) * sizeof(uint8_t));
-	memcpy(result, packet_data, packet_size * sizeof(uint8_t));
-	memcpy(result + packet_size, '\0', sizeof(uint8_t));
+	data = (char **) packet_data;
 
-	data = result;
 	return 0;
 }
 
