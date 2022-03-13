@@ -1,19 +1,14 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-
-SoftwareSerial ss(10,11);
-
-int count = 0;
+#include <comms.h>
 
 void setup() {
-  Serial.begin(115200);
-  ss.begin(9600);
-  ss.write("AT+P8");
-  Serial.println("Hello");
+  comms_init();
 }
 
+unsigned char* test_message = (unsigned char*) "This is a test message: all characters here should be transmitted succesfully";
+
 void loop() {
-  if (ss.available()) {
-    Serial.write(ss.read());
-  }
+  send(test_message, sizeof(test_message));
+  delay(1000);
 }

@@ -1,11 +1,11 @@
 #include "comms.h"
 
-//SoftwareSerial ss(10,11);
-//#define Serial ss
+SoftwareSerial ss(10,11);
+#define Serial ss
 
 void comms_init() {
-	//ss.begin(9600);
-	//ss.write("AT+P8");
+	Serial.begin(9600);
+	Serial.write("AT+P8");
 }
 
 void send(uint8_t data[], uint16_t data_length){
