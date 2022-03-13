@@ -8,7 +8,7 @@ int count = 0;
 void setup() {
   Serial.begin(115200);
   ss.begin(9600);
-  ss.write("AT+P8");
+  //ss.write("AT+P8");
   Serial.println("Hello");
 }
 
