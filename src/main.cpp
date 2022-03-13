@@ -6,7 +6,7 @@ void setup() {
   comms_init();
 }
 
-unsigned char* test_message = (unsigned char*) "This is a test message: all characters here should be transmitted succesfully";
+unsigned char test_message[14]= "short message";
 
 void loop() {
   send(test_message, sizeof(test_message));
