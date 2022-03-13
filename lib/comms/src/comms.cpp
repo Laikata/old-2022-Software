@@ -12,7 +12,7 @@ void comms_init() {
 void send(uint8_t data[], uint16_t data_length){
     
 	// SYN char + header + data + crc32 checksum
-	size_t packet_size = 1 + 2 + data_length + 4;
+	uint16_t packet_size = 1 + 2 + data_length + 4;
 	uint8_t packet[packet_size];
 
 	packet[0] = 0x16;
