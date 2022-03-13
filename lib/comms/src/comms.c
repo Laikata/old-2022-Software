@@ -22,21 +22,21 @@ void send(uint8_t data[], uint16_t data_length){
 	packet[2 + data_length + 3] = (checksum >> 8) & 0xff;
 	packet[2 + data_length + 4] = checksum & 0xff;
 
-	//Serial.write(packet, packet_size);
+	Serial.write(packet, packet_size);
 }
 
 int recv(char *data[]) {
 	uint8_t header[2];
-	//Serial.readBytes(header, 2);
+	Serial.readBytes(header, 2);
 	uint16_t packet_size = (uint16_t) header[0] + 
 						   ( (uint16_t) header[1] << 8);
 
 	uint8_t packet_data[packet_size + 1];
-	//Serial.readBytes(packet_data, packet_size);
+	Serial.readBytes(packet_data, packet_size);
 	packet_data[packet_size] = '\0';
 
 	uint8_t crc32_buffer[4];
-	//Serial.readBytes(crc32_buffer, 4);
+	Serial.readBytes(crc32_buffer, 4);
 	uint32_t checksum = (crc32_buffer[0] << 24) +
 						(crc32_buffer[1] << 16) +
 						(crc32_buffer[2] << 8) +
