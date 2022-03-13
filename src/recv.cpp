@@ -1,19 +1,22 @@
 #include <Arduino.h>
-#include <SoftwareSerial.h>
+#include <comms.h>
 
-SoftwareSerial ss(10,11);
-
-int count = 0;
 
 void setup() {
-  Serial.begin(115200);
-  ss.begin(9600);
-  //ss.write("AT+P8");
-  Serial.println("Hello");
+  comms_init();
 }
 
+char* result;
+
 void loop() {
-  if (ss.available()) {
-    Serial.write(ss.read());
+  if (incoming_pkg()) {
+    Serial.println("Package incoming!");
+    int packet_info = recv(&result);
+    if (packet_info != 0) {
+      Serial.print("Checksums don't match! ");
+    }else{
+      Serial.write(result);
+    }
+    
   }
 }

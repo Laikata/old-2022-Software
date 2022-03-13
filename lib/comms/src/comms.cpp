@@ -1,11 +1,11 @@
 #include "comms.h"
 
-//SoftwareSerial ss(10,11);
-//#define Serial ss
+SoftwareSerial ss(10,11);
 
 void comms_init() {
-	//ss.begin(9600);
-	//ss.write("AT+P8");
+	ss.begin(9600);
+	Serial.begin(115200);
+	Serial.println("Working!");
 }
 
 void send(uint8_t data[], uint16_t data_length){
@@ -35,18 +35,22 @@ void send(uint8_t data[], uint16_t data_length){
 
 int recv(char *data[]) {
 	uint8_t header[2];
-	Serial.readBytes(header, 2);
-	uint16_t packet_size = (uint16_t) header[0] + 
-						   ( (uint16_t) header[1] << 8);
+	ss.readBytes(header, 2);
 	uint16_t packet_size = (header[0] << 8) + 
 						   header[1];
 
+	Serial.print("Packet size is: ");
+	Serial.println(packet_size);
+
 	uint8_t packet_data[packet_size + 1];
-	Serial.readBytes(packet_data, packet_size);
+	ss.readBytes(packet_data, packet_size);
 	packet_data[packet_size] = '\0';
 
+	Serial.print("Packet data: ");
+	Serial.println( (char *) packet_data);
+
 	uint8_t crc32_buffer[4];
-	Serial.readBytes(crc32_buffer, 4);
+	ss.readBytes(crc32_buffer, 4);
 	uint32_t checksum = (crc32_buffer[0] << 24) +
 						(crc32_buffer[1] << 16) +
 						(crc32_buffer[2] << 8) +
@@ -64,7 +68,7 @@ int recv(char *data[]) {
 }
 
 int incoming_pkg() {
-	if(Serial.available() && Serial.read() == 0x16) {
+	if(ss.available() && ss.read() == 0x16) {
 		return 1;
 	} else {
 		return 0;
