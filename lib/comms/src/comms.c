@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <Arduino.h>
 
 void send(uint8_t data[], uint16_t data_length){
     
@@ -44,10 +45,10 @@ int read(char *data[]) {
 
 	uint8_t crc32_buffer[4];
 	Serial.readBytes(crc32_buffer, 4);
-	uint32_t checksum = (uint32_t) crc32_buffer[] +
-						( (uint32_t) crc32_buffer[] << 8) +
-						( (uint32_t) crc32_buffer[] << 16) +
-						( (uint32_t) crc32_buffer[] << 24)
+	uint32_t checksum = (uint32_t) crc32_buffer[0] +
+						( (uint32_t) crc32_buffer[1] << 8) +
+						( (uint32_t) crc32_buffer[2] << 16) +
+						( (uint32_t) crc32_buffer[3] << 24);
 
 	// TODO: Make the table a const in the header
 	const uint32_t* crc_table = make_crc_table();
