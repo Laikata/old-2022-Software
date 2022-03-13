@@ -1,13 +1,15 @@
 #include <vector.h>
 #include <gps.h>
-#include <imu.h>
-#include <nav.h>
+//#include <imu.h>
+//#include <nav.h>
+// Why are these headers included if they don't exist?
+
 
 vec3_t *g_destCord = NULL_VEC3;
 
 void setup(){
-    g_destCord = vec3_init();
-
+    //g_destCord = vec3_init();
+    // Fill the args here ^ and uncomment
     gps_init();
 }
 
