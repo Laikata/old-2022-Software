@@ -9,7 +9,7 @@ void comms_init() {
 	//Serial.write("AT+P8");
 }
 
-void send(uint8_t data[], size_t data_length){
+void send(uint8_t data[], uint16_t data_length){
     
 	// SYN char + header + data + crc32 checksum
 	uint16_t packet_size = 1 + 2 + data_length + 4;
