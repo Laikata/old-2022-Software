@@ -28,8 +28,8 @@ void send(uint8_t data[], uint16_t data_length){
 int recv(char *data[]) {
 	uint8_t header[2];
 	Serial.readBytes(header, 2);
-	uint16_t packet_size = (uint16_t) header[0] + 
-						   ( (uint16_t) header[1] << 8);
+	uint16_t packet_size = (header[0] << 8) + 
+				header[1];
 
 	uint8_t packet_data[packet_size + 1];
 	Serial.readBytes(packet_data, packet_size);
