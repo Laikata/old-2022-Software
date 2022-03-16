@@ -4,14 +4,12 @@
 #include <nav.h>
 #include <servos.h>
 
-
 vec3_t *g_destCord = NULL_VEC3;
 
 void setup(){
     g_destCord = vec3_init();
 
     gps_init();
-
 }
 
 void loop(){
@@ -20,8 +18,6 @@ void loop(){
     float north_dir = imu_north();
 
     float rotation = nav_angle(can_position, g_destCord, north_dir);
-
-
     // Mover servos
 
     // Recibir datos sensores
