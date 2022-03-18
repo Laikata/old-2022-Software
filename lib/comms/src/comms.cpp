@@ -1,9 +1,13 @@
 #include "comms.h"
 
-void send(uint8_t data[], uint16_t data_length){
+void comms_init() {
+	Serial.begin(9600);
+}
+
+void comms_send(uint8_t data[], uint16_t data_length){
     
 	// SYN char + header + data + crc32 checksum
-	size_t packet_size = 1 + 2 + data_length + 4;
+	uint16_t packet_size = 1 + 2 + data_length + 4;
 	uint8_t packet[packet_size];
 
 	packet[0] = 0x16;
@@ -11,7 +15,7 @@ void send(uint8_t data[], uint16_t data_length){
 	packet[1] = (data_length >> 8) & 0xff;
 	packet[2] = data_length & 0xff;
 
-	for (int i = 0; i < data_length; i++) {
+	for (uint32_t i = 0; i < data_length; i++) {
 		packet[i + 3] = data[i];
 	}
 
@@ -25,7 +29,7 @@ void send(uint8_t data[], uint16_t data_length){
 	Serial.write(packet, packet_size);
 }
 
-int recv(char *data[]) {
+int comms_recv(char *data[]) {
 	uint8_t header[2];
 	Serial.readBytes(header, 2);
 	uint16_t packet_size = (header[0] << 8) + 
@@ -37,8 +41,8 @@ int recv(char *data[]) {
 
 	uint8_t crc32_buffer[4];
 	Serial.readBytes(crc32_buffer, 4);
-	uint32_t checksum = (crc32_buffer[0] << 24) +
-						(crc32_buffer[1] << 16) +
+	uint32_t checksum = ( ((uint32_t) crc32_buffer[0]) << 24) +
+						( ((uint32_t) crc32_buffer[1]) << 16) +
 						(crc32_buffer[2] << 8) +
 						crc32_buffer[3];
 
