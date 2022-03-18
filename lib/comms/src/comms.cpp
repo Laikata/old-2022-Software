@@ -57,7 +57,7 @@ int comms_recv(char *data[]) {
 	return 0;
 }
 
-uint32_t crc32(const uint8_t data[], size_t data_length) {
+static uint32_t crc32(const uint8_t data[], size_t data_length) {
 	uint32_t crc32 = 0xFFFFFFFFu;
 	
 	for (size_t i = 0; i < data_length; i++) {
