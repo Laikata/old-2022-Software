@@ -1,5 +1,5 @@
-#ifndef MPU9250_ASUKIAAA_H
-#define MPU9250_ASUKIAAA_H
+#pragma once
+
 #include <Arduino.h>
 #include <Wire.h>
 
@@ -28,7 +28,7 @@
 #define MPU9250_BUFF_LEN_GYRO  6
 #define MPU9250_BUFF_LEN_MAG   7
 
-class MPU9250_asukiaaa {
+class MPU9250 {
   public:
   const uint8_t address;
   int16_t magXOffset, magYOffset, magZOffset;
@@ -36,7 +36,7 @@ class MPU9250_asukiaaa {
   uint8_t gyroBuff[MPU9250_BUFF_LEN_GYRO];
   uint8_t magBuff[MPU9250_BUFF_LEN_MAG];
 
-  MPU9250_asukiaaa(uint8_t address = MPU9250_ADDRESS_AD0_LOW);
+  MPU9250(uint8_t address = MPU9250_ADDRESS_AD0_LOW);
   void setWire(TwoWire *wire);
   uint8_t readId(uint8_t *id);
 
@@ -76,5 +76,3 @@ class MPU9250_asukiaaa {
   uint8_t i2cRead(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data);
   uint8_t i2cWriteByte(uint8_t Address, uint8_t Register, uint8_t Data);
 };
-
-#endif

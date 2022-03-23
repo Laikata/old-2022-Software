@@ -1,4 +1,4 @@
-#include <MPU9250_asukiaaa.h>
+#include <MPU9250.h>
 
 #ifdef _ESP32_HAL_I2C_H_
 #define SDA_PIN 21
@@ -7,12 +7,12 @@
 
 #define CALIB_SEC 20
 
-MPU9250_asukiaaa mySensor;
+MPU9250 mySensor;
 
 uint8_t sensorId;
 float mDirection, mX, mY, mZ;
 
-void setMagMinMaxAndSetOffset(MPU9250_asukiaaa* sensor, int seconds) {
+void setMagMinMaxAndSetOffset(MPU9250* sensor, int seconds) {
   unsigned long calibStartAt = millis();
   float magX, magXMin, magXMax, magY, magYMin, magYMax, magZ, magZMin, magZMax;
 

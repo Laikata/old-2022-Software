@@ -20,9 +20,9 @@ vec3_t *gps_position(){
 }
 
 int gps_satellites(){
-  return gps.satellites.value();
+    return gps.satellites.value();
 }
 
 void gps_init(){
-  ss.begin(GPSBaud);
+    ss.begin(GPSBaud);
 }

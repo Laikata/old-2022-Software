@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <vector.h>
 
 vec3_t *vec3_init(float x, float y, float z){
