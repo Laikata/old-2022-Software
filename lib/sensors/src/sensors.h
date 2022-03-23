@@ -1,19 +1,12 @@
-#pragma one
+#pragma once
 
-
-
-class sensors
-{
-    public:
-        sensors(int AM2302Pin);
-        float bmpAltitude();
-        float bmpPressure();
-        float bmpSealevelPressure();
-        float amTemperature();
-        float amHumidity();
-        void mpuCalibrateAccel();
-        void mpuCalibrateMag();
-        float mpuAccelerometer();
-        float mpuGyro();
-        float mpuMagnetometer();
-};
+float sensors_bmpAltitude();
+float sensors_bmpPressure();
+float sensors_bmpSealevelPressure();
+float sensors_amTemperature();
+float sensors_amHumidity();
+void sensors_mpuCalibrateAccel();
+void sensors_mpuCalibrateMag();
+float sensors_mpuAccelerometer();
+float sensors_mpuGyro();
+float sensors_mpuMagnetometer();
