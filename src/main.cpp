@@ -7,7 +7,7 @@
 vec3_t *g_destCord = NULL_VEC3;
 
 void setup(){
-    g_destCord = vec3_init();
+    g_destCord = vec3_init(0, 0, 0);
 
     gps_init();
 }
@@ -21,8 +21,6 @@ void loop(){
     
     // Programa de mover el servo empieza aqui :)
     servos_init(0, 3, 5);
-
-    if(rotation <)
     
     
     
