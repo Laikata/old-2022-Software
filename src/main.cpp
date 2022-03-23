@@ -18,6 +18,17 @@ void loop(){
     float north_dir = imu_north();
 
     float rotation = nav_angle(can_position, g_destCord, north_dir);
+    
+    // Programa de mover el servo empieza aqui :)
+    servos_init(0, 3, 5);
+
+    if(rotation <)
+    
+    
+    
+    
+    
+    
     // Mover servos
 
     // Recibir datos sensores
