@@ -3,6 +3,11 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#ifdef _ESP32_HAL_I2C_H_
+#define SDA_PIN 21
+#define SCL_PIN 22
+#endif
+
 #define MPU9250_ADDRESS_AD0_LOW  0x68
 #define MPU9250_ADDRESS_AD0_HIGH 0x69
 
@@ -76,3 +81,6 @@ class MPU9250 {
   uint8_t i2cRead(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data);
   uint8_t i2cWriteByte(uint8_t Address, uint8_t Register, uint8_t Data);
 };
+
+float imu_north();
+void imu_init();

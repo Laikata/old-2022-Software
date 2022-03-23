@@ -228,3 +228,22 @@ float MPU9250::gyroY() {
 float MPU9250::gyroZ() {
   return gyroGet(4, 5);
 }
+
+
+
+MPU9250 mpu;
+
+float imu_north(){
+  mpu.magUpdate();
+  return mpu.magHorizDirection();
+}
+
+void imu_init(){
+#ifdef _ESP32_HAL_I2C_H_ // For ESP32
+  Wire.begin(SDA_PIN, SCL_PIN); // SDA, SCL
+#else
+  Wire.begin();
+#endif
+  mpu.setWire(&Wire);
+  mpu.beginMag();
+}
