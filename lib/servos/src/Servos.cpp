@@ -17,6 +17,13 @@ unsigned long interval = 10;
 
 
 
+<<<<<<< HEAD
+=======
+servoRight.write(0);
+servoLeft.write(0);
+
+*/
+>>>>>>> 789412616e8851cdffd5b4fe2cda46cb1b7e031b
 int velocity = 0;
 
 
