@@ -1,11 +1,5 @@
-/*
-// Si el comentario es "//*" significa anotacion personal que luego sera removida, no es un comentario.
-*/
-//HOLA
 
-
-
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <Servo.h>
 #include <servos.h>
 
@@ -21,16 +15,8 @@ unsigned long lastTimeRight = 0;
 
 unsigned long interval = 10;
 
-/*
-PONER EN INITS
 
-servoRight.attach(9); //*Poner pin servo der.
-servoLeft.attach(9);  //*Poner pin servo izq.
 
-servoRight.write(0);
-servoLeft.write(0);
-
-*/
 int velocity = 0;
 
 

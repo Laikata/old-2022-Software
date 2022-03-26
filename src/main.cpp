@@ -6,13 +6,13 @@
 
 vec3_t *g_destCord = NULL_VEC3;
 
-void setup(){
+/*void setup(){
     g_destCord = vec3_init(0, 0, 0);
 
     gps_init();
-}
+}*/
 
-void loop(){
+void loop__(){
     vec3_t *can_position = gps_position();
 
     float north_dir = imu_north();
@@ -20,9 +20,11 @@ void loop(){
     float rotation = nav_angle(can_position, g_destCord, north_dir);
     
     // Programa de mover el servo empieza aqui :)
-    servos_init(0, 3, 5);
+    servos_init(0, 3, 5);   /*Poner esto cuando antes de activar los servos. 
+                            No lo pongais nada mas arrancar el programa porque 
+                            o si no los servos se pasaran todo el rato consumiendo de la bateria*/
     
-    
+    //angleServoRight();
     
     
     
