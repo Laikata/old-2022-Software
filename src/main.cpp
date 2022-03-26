@@ -1,9 +1,10 @@
 #include <vector.h>
 #include <gps.h>
-#include <imu.h>
 #include <nav.h>
 #include <servos.h>
+#include "MPU9250.h"
 
+MPU9250 mpu;
 vec3_t *g_destCord = NULL_VEC3;
 
 void setup(){
@@ -30,6 +31,9 @@ void loop(){
     // Mover servos
 
     // Recibir datos sensores
+    vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
+    vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
+    vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
 
     //   1. Voltaje bateria
     //   2. Temperatura
