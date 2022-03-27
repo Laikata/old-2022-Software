@@ -4,16 +4,21 @@
 #include <servos.h>
 #include <comms.h>
 #include <Adafruit_BMP085.h>
+#include <ErriezDHT22.h>
 #include <imu.h>
 
+#define DHT22_PIN 1 // <- TODO!
+
 MPU9250 mpu;
+Adafruit_BMP085 bmp;
+DHT22 dht22(DHT22_PIN);
 vec3_t *g_destCord = NULL_VEC3;
 
 void setup(){
     g_destCord = vec3_init(0, 0, 0);
 
     //TODO: Calibrate sensors
-
+    dht22.begin();
     gps_init();
 }
 
@@ -38,10 +43,15 @@ void loop(){
     //   1. Voltaje bateria
     //   2. Temperatura
     //   3. Presión
+    // TODO: Read battery voltage
+    float temperature = bmp.readTemperature(); // Do we read temp from the BMP085 or the DHT22?
+    float pressure = bmp.readPressure();
+    float humidity = dht22.readHumidity();
     
 
     // Mandar datos por radio + posición GPS
     comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
+    comms_env(temperature, humidity, pressure);
 
     // Liberar memoria alocada
 }
