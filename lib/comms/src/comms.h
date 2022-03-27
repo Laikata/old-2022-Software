@@ -71,6 +71,6 @@ static const uint32_t crc_table[256] = {
   0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
-void send(uint8_t data[], uint16_t data_length);
-int recv(char *data[]);
+void comms_send(uint8_t data[], uint16_t data_length);
+int comms_recv(char *data[]);
 static uint32_t crc32(const uint8_t data[], size_t data_length);
