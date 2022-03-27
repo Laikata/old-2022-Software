@@ -46,6 +46,19 @@ void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz) {
 	comms_send(data, data_size);
 }
 
+void comms_env(float temp, float humidity, float pressure) {
+	static const int data_size = sizeof(uint8_t) + sizeof(float) * 3;
+	uint8_t data[data_size];
+
+	data[0] = 0x03;
+	// NOTE: This depends on endianness!
+	memcpy(&data[1], &temp, sizeof(float));
+	memcpy(&data[5], &humidity, sizeof(float));
+	memcpy(&data[9], &pressure, sizeof(float));
+
+	comms_send(data, data_size);
+}
+
 int comms_recv(char *data[]) {
 	uint8_t header[2];
 	Serial.readBytes(header, 2);
