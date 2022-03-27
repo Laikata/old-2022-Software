@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <Arduino.h>
+#include <vector.h>
 
 static const uint32_t crc_table[256] = {
   0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9,
@@ -73,4 +74,5 @@ static const uint32_t crc_table[256] = {
 
 void comms_send(uint8_t data[], uint16_t data_length);
 int comms_recv(char *data[]);
+void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz);
 static uint32_t crc32(const uint8_t data[], size_t data_length);

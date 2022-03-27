@@ -29,6 +29,23 @@ void comms_send(uint8_t data[], uint16_t data_length){
 	Serial.write(packet, packet_size);
 }
 
+void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz) {
+	static const int data_size = sizeof(uint16_t) + (sizeof(vec3_t) * 3) + sizeof(float);
+	uint8_t data[data_size];
+
+	data[0] = 0x02;
+	vec3_t allvecs[3] = {mag, accel, gyro};
+	// NOTE: This depends on endianness!
+	for(int i = 0; i < 3; i++) {
+		memcpy(&data[(i*sizeof(vec3_t))+1], &allvecs[i].x, 4);
+		memcpy(&data[(i*sizeof(vec3_t))+5], &allvecs[i].y, 4);
+		memcpy(&data[(i*sizeof(vec3_t))+9], &allvecs[i].z, 4);
+	}
+	memcpy(&data[36], &hoz, 4);
+
+	comms_send(data, data_size);
+}
+
 int comms_recv(char *data[]) {
 	uint8_t header[2];
 	Serial.readBytes(header, 2);
