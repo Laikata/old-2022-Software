@@ -1000,6 +1000,13 @@ private:
         Serial.print("I2C ERROR CODE : ");
         Serial.println(i2c_err_);
     }
+
+// Functions added by us start here
+public:
+    float getMagHoz() {
+        return atan2(getMagX(), getMagY()) * 180 / PI;
+    }
+
 };
 
 using MPU9250 = MPU9250_<TwoWire>;
