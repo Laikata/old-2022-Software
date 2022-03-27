@@ -20,7 +20,8 @@ void setup(){
 void loop(){
     vec3_t *can_position = gps_position();
 
-    //float north_dir = imu_north();
+    mpu.update();
+    float north_dir = mpu.getMagHoz();
 
     float rotation = nav_angle(can_position, g_destCord, north_dir);
     
@@ -33,7 +34,6 @@ void loop(){
     vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
     vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
     vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
-    //float hoz = mpu.get <- I don't know how to get this
 
     //   1. Voltaje bateria
     //   2. Temperatura
@@ -41,6 +41,7 @@ void loop(){
     
 
     // Mandar datos por radio + posición GPS
+    comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
 
     // Liberar memoria alocada
 }
