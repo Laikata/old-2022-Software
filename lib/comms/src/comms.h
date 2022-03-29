@@ -76,4 +76,5 @@ void comms_send(uint8_t data[], uint16_t data_length);
 int comms_recv(char *data[]);
 void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz);
 void comms_env(float temp, float humidity, float pressure);
+void comms_gps(float longitude, float latitude, float altitude);
 static uint32_t crc32(const uint8_t data[], size_t data_length);

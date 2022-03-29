@@ -59,6 +59,19 @@ void comms_env(float temp, float humidity, float pressure) {
 	comms_send(data, data_size);
 }
 
+void comms_gps(float longitude, float latitude, float altitude) {
+	static const int data_size = sizeof(uint8_t) + sizeof(float) * 3;
+	uint8_t data[data_size];
+
+	data[0] = 0x01;
+	//NOTE: This depends on endianness!
+	memcpy(&data[1], &longitude, sizeof(float));
+	memcpy(&data[5], &latitude, sizeof(float));
+	memcpy(&data[9], &altitude, sizeof(float));
+
+	comms_send(data, data_size);
+}
+
 int comms_recv(char *data[]) {
 	uint8_t header[2];
 	Serial.readBytes(header, 2);
