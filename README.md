@@ -1,3 +1,3 @@
 # Laikata Software
 
-This repository is ment to be the main codebase for [Laikata project](https://github.com/Laikata)
+This repository is meant to be the main codebase for [Laikata project](https://github.com/Laikata)
