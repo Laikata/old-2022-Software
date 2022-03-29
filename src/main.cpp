@@ -52,6 +52,7 @@ void loop(){
     // Mandar datos por radio + posición GPS
     comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
     comms_env(temperature, humidity, pressure);
+    comms_gps(can_position->x, can_position->y, can_position->z);
 
     // Liberar memoria alocada
 }

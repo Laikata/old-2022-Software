@@ -21,6 +21,7 @@ void comms_send(uint8_t data[], uint16_t data_length){
 
 	uint32_t checksum = crc32(data, data_length);
 
+	//TODO: Test whether this is sent in big endian or not
 	packet[2 + data_length + 1] = (checksum >> 24) & 0xff;
 	packet[2 + data_length + 2] = (checksum >> 16) & 0xff;
 	packet[2 + data_length + 3] = (checksum >> 8) & 0xff;
