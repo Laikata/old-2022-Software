@@ -4,16 +4,16 @@ void comms_init() {
 	Serial.begin(9600);
 }
 
-void comms_send(uint8_t data[], uint16_t data_length){
+void comms_send(uint8_t data[], uint8_t data_length){
     
-	// SYN char + header + data + crc32 checksum
-	uint16_t packet_size = 1 + 2 + data_length + 4;
+	// SYN char + header + counter + data + crc32 checksum
+	uint16_t packet_size = 1 + 1 + 1 + data_length + 4;
+	static uint8_t counter = 0;
 	uint8_t packet[packet_size];
 
 	packet[0] = 0x16;
-
-	packet[1] = (data_length >> 8) & 0xff;
-	packet[2] = data_length & 0xff;
+	packet[1] = data_length;
+	packet[2] = counter;
 
 	for (uint32_t i = 0; i < data_length; i++) {
 		packet[i + 3] = data[i];
@@ -27,6 +27,7 @@ void comms_send(uint8_t data[], uint16_t data_length){
 	packet[2 + data_length + 3] = (checksum >> 8) & 0xff;
 	packet[2 + data_length + 4] = checksum & 0xff;
 
+	counter++; // This will overflow and that is okay
 	Serial.write(packet, packet_size);
 }
 
