@@ -30,17 +30,48 @@ void comms_send(uint8_t data[], uint16_t data_length){
 	Serial.write(packet, packet_size);
 }
 
+// This should work but I'm not really sure...
+float ReverseFloat(float value) {
+	typedef union f32_u8 {
+		float f;
+		uint8_t b[4];
+	} f32_u8;
+
+	f32_u8 value_union = {.f = value};
+	
+	f32_u8 reversed_float = {.b = {
+		value_union.b[3],
+		value_union.b[2],
+		value_union.b[1],
+		value_union.b[0]
+	}};
+	return reversed_float.f;
+}
+
+inline float BigEndianFloat(float value) {
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	return ReverseFloat(value);
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+	return value;
+#else
+#	error Unsupported endianness
+#endif
+}
+
 void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz) {
 	static const int data_size = sizeof(uint8_t) + (sizeof(vec3_t) * 3) + sizeof(float);
 	uint8_t data[data_size];
 
 	data[0] = 0x02;
-	vec3_t allvecs[3] = {mag, accel, gyro};
-	// NOTE: This depends on endianness!
+	vec3_t * allvecs[3] = {&mag, &accel, &gyro};
 	for(int i = 0; i < 3; i++) {
-		memcpy(&data[(i*sizeof(vec3_t))+1], &allvecs[i].x, sizeof(float));
-		memcpy(&data[(i*sizeof(vec3_t))+5], &allvecs[i].y, sizeof(float));
-		memcpy(&data[(i*sizeof(vec3_t))+9], &allvecs[i].z, sizeof(float));
+		float x = BigEndianFloat(allvecs[i]->x);
+		float y = BigEndianFloat(allvecs[i]->y);
+		float z = BigEndianFloat(allvecs[i]->z);
+
+		memcpy(&data[(i*sizeof(vec3_t))+1], &x, sizeof(float));
+		memcpy(&data[(i*sizeof(vec3_t))+5], &y, sizeof(float));
+		memcpy(&data[(i*sizeof(vec3_t))+9], &z, sizeof(float));
 	}
 	memcpy(&data[36], &hoz, 4);
 
@@ -51,11 +82,14 @@ void comms_env(float temp, float humidity, float pressure) {
 	static const int data_size = sizeof(uint8_t) + sizeof(float) * 3;
 	uint8_t data[data_size];
 
+	float bige_temp = BigEndianFloat(temp);
+	float bige_hum = BigEndianFloat(humidity);
+	float bige_pres = BigEndianFloat(pressure);
+
 	data[0] = 0x03;
-	// NOTE: This depends on endianness!
-	memcpy(&data[1], &temp, sizeof(float));
-	memcpy(&data[5], &humidity, sizeof(float));
-	memcpy(&data[9], &pressure, sizeof(float));
+	memcpy(&data[1], &bige_temp, sizeof(float));
+	memcpy(&data[5], &bige_hum, sizeof(float));
+	memcpy(&data[9], &bige_pres, sizeof(float));
 
 	comms_send(data, data_size);
 }
@@ -64,11 +98,14 @@ void comms_gps(float longitude, float latitude, float altitude) {
 	static const int data_size = sizeof(uint8_t) + sizeof(float) * 3;
 	uint8_t data[data_size];
 
+	float bige_lon = BigEndianFloat(longitude);
+	float bige_lat = BigEndianFloat(latitude);
+	float bige_alt = BigEndianFloat(altitude);
+
 	data[0] = 0x01;
-	//NOTE: This depends on endianness!
-	memcpy(&data[1], &longitude, sizeof(float));
-	memcpy(&data[5], &latitude, sizeof(float));
-	memcpy(&data[9], &altitude, sizeof(float));
+	memcpy(&data[1], &bige_lon, sizeof(float));
+	memcpy(&data[5], &bige_lat, sizeof(float));
+	memcpy(&data[9], &bige_alt, sizeof(float));
 
 	comms_send(data, data_size);
 }
