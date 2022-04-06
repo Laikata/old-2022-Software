@@ -33,20 +33,14 @@ void comms_send(uint8_t data[], uint8_t data_length){
 
 // This should work but I'm not really sure...
 float ReverseFloat(float value) {
-	typedef union f32_u8 {
+    union {
 		float f;
-		uint8_t b[4];
-	} f32_u8;
+		uint32_t i;
+	} f32_u8 = {.f = value};
 
-	f32_u8 value_union = {.f = value};
-	
-	f32_u8 reversed_float = {.b = {
-		value_union.b[3],
-		value_union.b[2],
-		value_union.b[1],
-		value_union.b[0]
-	}};
-	return reversed_float.f;
+    f32_u8.i = __builtin_bswap32(f32_u8.i);
+
+	return f32_u8.f;
 }
 
 inline float BigEndianFloat(float value) {
