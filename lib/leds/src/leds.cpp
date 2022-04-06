@@ -2,7 +2,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <leds.h>
 
-Adafruit_NeoPixel g_Led(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+static Adafruit_NeoPixel g_Led(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 void leds_init(){
     g_Led.begin();
