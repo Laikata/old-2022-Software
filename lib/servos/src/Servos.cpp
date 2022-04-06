@@ -39,12 +39,11 @@ void servos_init(int rightPin, int leftPin, int ServosVelocity) {
 
     servoRight.attach(rightPin); //*Poner pin servo der.
     servoLeft.attach(leftPin);  //*Poner pin servo izq.
-
-    servoRight.write(0);
-    servoLeft.write(0);
 }
 
 void servos_angleRight(float angle) {
+    servoRight.write(angle);   
+    return;
     actualTime = millis();
     if(angle > lastAngleRight && (actualTime - lastTimeRight) > interval){
 

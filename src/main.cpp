@@ -2,12 +2,14 @@
 #include <gps.h>
 #include <nav.h>
 #include <servos.h>
-#include <comms.h>
+#include <Arduino.h>
+#include <Servo.h>
+/*#include <comms.h>
 #include <Adafruit_BMP085.h>
 #include <ErriezDHT22.h>
 #include <imu.h>
-
-#define DHT22_PIN 1 // <- TODO!
+*/
+/*#define DHT22_PIN 1 // <- TODO!
 
 MPU9250 mpu;
 Adafruit_BMP085 bmp;
@@ -55,4 +57,24 @@ void loop(){
     comms_gps(can_position->x, can_position->y, can_position->z);
 
     // Liberar memoria alocada
+}
+*/
+int angle = 90;
+int serie;
+Servo myservo;
+
+void setup(){
+    Serial.begin(115200);
+    myservo.attach(D0);
+}
+
+void loop(){
+    serie = Serial.parseInt();
+    if(serie != 0){
+        angle = serie;
+        Serial.println(angle);
+    }
+    myservo.write(angle);
+    delay(10);
+    
 }
