@@ -106,10 +106,11 @@ void comms_gps(float longitude, float latitude, float altitude) {
 }
 
 int comms_recv(char *data[]) {
-	uint8_t header[2];
-	Serial.readBytes(header, 2);
-	uint16_t packet_size = (header[0] << 8) + 
-				header[1];
+	uint8_t packet_size = 0;
+	Serial.readBytes(&packet_size, 1);
+
+    uint8_t counter = 0;
+    Serial.readBytes(&counter, 1);
 
 	uint8_t packet_data[packet_size + 1];
 	Serial.readBytes(packet_data, packet_size);
