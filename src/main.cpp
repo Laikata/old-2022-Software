@@ -59,13 +59,23 @@ void loop(){
     // Liberar memoria alocada
 }
 */
+
+
+/*
+arriba derecha 160
+abajo derecha 30
+
+abajo izquierda 160
+arriba izquierda 25
+
+*/
 int angle = 90;
 int serie;
-Servo myservo;
 
 void setup(){
     Serial.begin(115200);
-    myservo.attach(D0);
+    Serial.setTimeout(10);
+    servos_init(D0, D3, 1);
 }
 
 void loop(){
@@ -74,7 +84,6 @@ void loop(){
         angle = serie;
         Serial.println(angle);
     }
-    myservo.write(angle);
-    delay(10);
+    servos_angleLeft(angle);
     
 }
