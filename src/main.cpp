@@ -31,13 +31,6 @@ void setup(){
 }
 
 void loop(){
-    vec3_t *can_position = gps_position();
-
-    mpu.update();
-    float north_dir = mpu.getMagHoz();
-
-    float rotation = nav_angle(can_position, g_destCord, north_dir);
-    
     // Programa de mover el servo empieza aqui :)
     servos_init(0, 3, 5);
     
@@ -53,6 +46,9 @@ void loop(){
         comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
     }
 
+    vec3_t *can_position = gps_position();
+    comms_gps(can_position->x, can_position->y, can_position->z);
+    float rotation = nav_angle(can_position, g_destCord, north_dir);
 
     //   1. Voltaje bateria
     //   2. Temperatura
