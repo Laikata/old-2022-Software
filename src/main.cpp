@@ -46,9 +46,15 @@ void loop(){
     // Mover servos
 
     // Recibir datos sensores
-    vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
-    vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
-    vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
+    float north_dir = 0;
+    if(mpu.update()) {
+        north_dir = mpu.getMagHoz();
+        vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
+        vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
+        vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
+        comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
+    }
+
 
     //   1. Voltaje bateria
     //   2. Temperatura
