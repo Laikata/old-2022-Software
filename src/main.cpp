@@ -6,6 +6,7 @@
 #include <Adafruit_BMP085.h>
 #include <ErriezDHT22.h>
 #include <imu.h>
+#include "eeprom_utils.h"
 
 #define DHT22_PIN D4
 
@@ -15,12 +16,18 @@ DHT22 dht22(DHT22_PIN);
 vec3_t *g_destCord = NULL_VEC3;
 
 void setup(){
+    EEPROM.begin(0x80);
+    Wire.begin();
+
     g_destCord = vec3_init(0, 0, 0);
 
-    //TODO: Calibrate sensors
+    //TODO: Add calibrate branch to main repo
+    mpu.setup(0x68);
     dht22.begin();
     bmp.begin();
     gps_init();
+
+    loadCalibration();
 }
 
 void loop(){
