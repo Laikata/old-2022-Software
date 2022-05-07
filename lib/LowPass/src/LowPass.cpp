@@ -5,7 +5,7 @@
 #include "LowPass.h"
 
 
-float LowPass::low_pass(float value)
+float LowPassFilter::low_pass(float value)
 {
     float processedValue = 0.8*prevProcessedValue + 0.1*prevValue + 0.1*value;
     prevValue = value;

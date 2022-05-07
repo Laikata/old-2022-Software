@@ -1,6 +1,6 @@
 #pragma once
 
-class LowPass {
+class LowPassFilter {
 
     private: 
         float prevValue = 0;
