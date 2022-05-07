@@ -22,8 +22,8 @@ unsigned long interval = 10;
 
 int velocity = 0;
 
-int _rightPin;
-int _leftPin;
+int _rightPin = 0;
+int _leftPin = 0;
 
 
 Servos::Servos(int rightPin, int leftPin, int ServosVelocity) {
