@@ -32,7 +32,7 @@ Servos::Servos(int ServosVelocity) {
 
 void Servos::angleRight(int angle) {
     actualTime = millis();
-    int angle = map(angle, 0, 100, 30, 160);
+    angle = map(angle, 0, 100, 30, 160);
     if(angle > lastAngleRight && (actualTime - lastTimeRight) > interval){
 
         lastTimeRight = actualTime;
@@ -51,7 +51,7 @@ void Servos::angleRight(int angle) {
 
 void Servos::angleLeft(int angle) {
     actualTime = millis();
-    int angle = map(angle, 0, 100, 160, 25);
+    angle = map(angle, 0, 100, 160, 25);
     if(angle > lastAngleLeft && (actualTime - lastTimeLeft) > interval){
 
         lastTimeLeft = actualTime;

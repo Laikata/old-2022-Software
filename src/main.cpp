@@ -2,6 +2,7 @@
 #include <gps.h>
 #include <nav.h>
 #include <servos.h>
+#include <dir.h>
 #include <Arduino.h>
 #include <Servo.h>
 #include <comms.h>
@@ -32,6 +33,8 @@ void setup(){
 
     loadCalibration();
 }
+
+void moveServos();
 
 void loop(){
     // Programa de mover el servo empieza aqui :)
