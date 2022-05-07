@@ -1,6 +1,6 @@
 /* 
-This is the servo controller library. The functions allow us to controll the angle of the servos with a certain velocity.
-They also allow us to attach or detach the servos, in order to consume less energy.
+This is the servo controller library. The following functions are capable to controling the angle of the servos with a certain velocity.
+It can also attach or detach the servos, in order to consume less energy.
 */
 
 //
