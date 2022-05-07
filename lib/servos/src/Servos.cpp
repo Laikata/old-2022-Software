@@ -1,10 +1,9 @@
-/*
-// Si el comentario es "//*" significa anotacion personal que luego sera removida, no es un comentario.
+/* 
+This is the servo controller library. The following functions are capable to controling the angle of the servos with a certain velocity.
+It can also attach or detach the servos, in order to consume less energy.
 */
-//HOLA
 
-
-
+//
 #include <Arduino.h>
 #include <Servo.h>
 #include <servos.h>
@@ -12,8 +11,8 @@
 Servo servoRight;
 Servo servoLeft;
 
-float lastAngleRight = 0;
-float lastAngleLeft = 0;
+int lastAngleRight = 0;
+int lastAngleLeft = 0;
 
 unsigned long actualTime = 0;
 unsigned long lastTimeLeft = 0;
@@ -21,31 +20,19 @@ unsigned long lastTimeRight = 0;
 
 unsigned long interval = 10;
 
-/*
-PONER EN INITS
-
-servoRight.attach(9); //*Poner pin servo der.
-servoLeft.attach(9);  //*Poner pin servo izq.
-
-servoRight.write(0);
-servoLeft.write(0);
-
-*/
 int velocity = 0;
 
+#define RIGHT_PIN D0
+#define LEFT_PIN D3
 
-void servos_init(int rightPin, int leftPin, int ServosVelocity) {
+
+Servos::Servos(int ServosVelocity) {
     velocity = ServosVelocity;
-
-    servoRight.attach(rightPin); //*Poner pin servo der.
-    servoLeft.attach(leftPin);  //*Poner pin servo izq.
-
-    servoRight.write(0);
-    servoLeft.write(0);
 }
 
-void servos_angleRight(float angle) {
+void Servos::angleRight(int angle) {
     actualTime = millis();
+    int angle = map(angle, 0, 100, 30, 160);
     if(angle > lastAngleRight && (actualTime - lastTimeRight) > interval){
 
         lastTimeRight = actualTime;
@@ -62,8 +49,9 @@ void servos_angleRight(float angle) {
     }
 }
 
-void servos_angleLeft(float angle) {
+void Servos::angleLeft(int angle) {
     actualTime = millis();
+    int angle = map(angle, 0, 100, 160, 25);
     if(angle > lastAngleLeft && (actualTime - lastTimeLeft) > interval){
 
         lastTimeLeft = actualTime;
@@ -79,3 +67,15 @@ void servos_angleLeft(float angle) {
         
     }
 }
+
+void Servos::attach(){
+    servoRight.attach(RIGHT_PIN); 
+    servoLeft.attach(LEFT_PIN);
+}
+
+void Servos::detach(){
+    servoRight.detach();
+    servoLeft.detach();
+}
+
+//  :)

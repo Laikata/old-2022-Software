@@ -2,6 +2,8 @@
 #include <gps.h>
 #include <nav.h>
 #include <servos.h>
+#include <Arduino.h>
+#include <Servo.h>
 #include <comms.h>
 #include <Adafruit_BMP085.h>
 #include <ErriezDHT22.h>
@@ -10,6 +12,7 @@
 
 #define DHT22_PIN D4
 
+Servos servo(5);
 MPU9250 mpu;
 Adafruit_BMP085 bmp;
 DHT22 dht22(DHT22_PIN);
@@ -32,7 +35,6 @@ void setup(){
 
 void loop(){
     // Programa de mover el servo empieza aqui :)
-    servos_init(0, 3, 5);
     
     // Mover servos
 
@@ -63,4 +65,16 @@ void loop(){
     }
 
     // Liberar memoria alocada
+}
+
+
+void moveServos(){
+    float direction;
+    calculate_direction(&direction, 0 /*latitud de donde quieres ir */, 0 /*longitud de donde quieres ir */,
+    0 /*altura de donde quieres ir */, gps_position()->x, gps_position()->y, gps_position()->z);
+
+    float mappedDirection = map(direction, 0, 2 * PI, -50, 50) ;
+
+    servo.angleRight(50 - mappedDirection);
+    servo.angleLeft(50 + mappedDirection);
 }
