@@ -85,26 +85,7 @@ void loop(){
         Serial.println(angle);
     }
     servos_angleLeft(angle);
-    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
