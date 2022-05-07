@@ -70,7 +70,7 @@ arriba izquierda 25
 
 */
 int angle = 90;
-int serie;
+int serie = 0;
 
 void setup(){
     Serial.begin(115200);
