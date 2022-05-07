@@ -112,12 +112,12 @@ void loop(){
 Servos servo;
 
 void moveServos(){
-    float _direction;
-    calculate_direction(&_direction, 0 /*latitud de donde quieres ir */, 0 /*longitud de donde quieres ir */,
+    float direction;
+    calculate_direction(&direction, 0 /*latitud de donde quieres ir */, 0 /*longitud de donde quieres ir */,
     0 /*altura de donde quieres ir */, gps_position()->x, gps_position()->y, gps_position()->z);
 
-    float __direction = map(_direction, 0, 2 * PI, -50, 50) ;
+    float mappedDirection = map(direction, 0, 2 * PI, -50, 50) ;
 
-    servo.angleRight(50 - __direction);
-    servo.angleLeft(50 + __direction);
+    servo.angleRight(50 - mappedDirection);
+    servo.angleLeft(50 + mappedDirection);
 }
