@@ -22,8 +22,8 @@ unsigned long interval = 10;
 
 int velocity = 0;
 
-#define RIGHT_PIN 0
-#define LEFT_PIN 0
+#define RIGHT_PIN D0
+#define LEFT_PIN D3
 
 
 Servos::Servos(int ServosVelocity) {
