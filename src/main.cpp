@@ -4,13 +4,14 @@
 #include <servos.h>
 #include <Arduino.h>
 #include <Servo.h>
-/*#include <comms.h>
+#include <comms.h>
 #include <Adafruit_BMP085.h>
 #include <ErriezDHT22.h>
 #include <imu.h>
-*/
-/*#define DHT22_PIN 1 // <- TODO!
+#include <dir.h>
+#define DHT22_PIN 1 // <- TODO!
 
+Servos servo(5);
 MPU9250 mpu;
 Adafruit_BMP085 bmp;
 DHT22 dht22(DHT22_PIN);
@@ -33,7 +34,6 @@ void loop(){
     float rotation = nav_angle(can_position, g_destCord, north_dir);
     
     // Programa de mover el servo empieza aqui :)
-    servos_init(0, 3, 5);
     
     // Mover servos
 
@@ -58,31 +58,7 @@ void loop(){
 
     // Liberar memoria alocada
 }
-*/
 
-
-/*
-arriba derecha 160
-abajo derecha 30
-
-abajo izquierda 160
-arriba izquierda 25
-
-*/
-
-
-void setup(){
-
-}
-
-void loop(){
-
-}
-
-
-
-#include <dir.h>
-Servos servo;
 
 void moveServos(){
     float direction;

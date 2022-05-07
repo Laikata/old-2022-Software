@@ -3,7 +3,7 @@
 class Servos
 {
   public:
-    Servos(int rightPin, int leftPin, int ServosVelocity);
+    Servos(int ServosVelocity);
     void angleRight(int angle);
     void angleLeft(int angle);
     void attach();
@@ -11,8 +11,6 @@ class Servos
   private:
     int lastAngleRight;
     int lastAngleLeft;
-    int _rightPin;
-    int _lefttPin;
     unsigned long actualTime;
     unsigned long lastTimeLeft;
     unsigned long lastTimeRight;
