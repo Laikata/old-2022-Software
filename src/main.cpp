@@ -32,6 +32,8 @@ void setup(){
     bmp.begin();
     gps_init();
 
+    Serial.println("Starting Programm");
+
     loadCalibration();
 }
 
@@ -41,6 +43,7 @@ void loop(){
     // Programa de mover el servo empieza aqui :)
     
     // Mover servos
+
 
     // Recibir datos sensores
     float north_dir = 0;
@@ -77,7 +80,7 @@ void moveServos(){
     float realDirection = 0;
     static LowPassFilter lowPass;
 
-    calculate_direction(&direction, 0 /*latitud de donde quieres ir */, 0 /*longitud de donde quieres ir */,
+    calculate_direction(&direction, 38.831541514133754 /*latitud de donde quieres ir */, 0.10366977616384526 /*longitud de donde quieres ir */,
     0 /*altura de donde quieres ir */, gps_position()->x, gps_position()->y, 0);
 
     
