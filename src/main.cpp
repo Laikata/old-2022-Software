@@ -10,6 +10,7 @@
 #include <ErriezDHT22.h>
 #include <imu.h>
 #include "eeprom_utils.h"
+#include <LowPass.h>
 
 #define DHT22_PIN D4
 
@@ -73,8 +74,30 @@ void loop(){
 
 void moveServos(){
     float direction;
+    float realDirection = 0;
+    static LowPassFilter lowPass;
+
     calculate_direction(&direction, 0 /*latitud de donde quieres ir */, 0 /*longitud de donde quieres ir */,
-    0 /*altura de donde quieres ir */, gps_position()->x, gps_position()->y, gps_position()->z);
+    0 /*altura de donde quieres ir */, gps_position()->x, gps_position()->y, 0);
+
+    
+    realDirection = lowPass.low_pass(mpu.getMagHoz());
+    direction = map(direction, 0, 2 * PI, 0, 360);
+
+    direction = direction - realDirection;
+    if(direction == 0)
+    {
+        direction = 0;
+    }
+    else if (direction > 180)
+    {
+        direction -=360;
+    }
+    else if (direction < -180)
+    {
+        direction += 360;
+    }
+    
 
     float mappedDirection = map(direction, 0, 2 * PI, -50, 50) ;
 
