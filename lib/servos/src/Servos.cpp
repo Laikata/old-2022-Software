@@ -22,27 +22,25 @@ unsigned long interval = 10;
 
 int velocity = 0;
 
-int _rightPin = 0;
-int _leftPin = 0;
+#define RIGHT_PIN 0
+#define LEFT_PIN 0
 
 
-Servos::Servos(int rightPin, int leftPin, int ServosVelocity) {
+Servos::Servos(int ServosVelocity) {
     velocity = ServosVelocity;
-    _rightPin = rightPin; 
-    _leftPin = leftPin;
 }
 
 void Servos::angleRight(int angle) {
     actualTime = millis();
-    int _angle = map(angle, 0, 100, 30, 160);
-    if(_angle > lastAngleRight && (actualTime - lastTimeRight) > interval){
+    int angle = map(angle, 0, 100, 30, 160);
+    if(angle > lastAngleRight && (actualTime - lastTimeRight) > interval){
 
         lastTimeRight = actualTime;
         servoRight.write(lastAngleRight + velocity);  
         lastAngleRight = lastAngleRight + velocity;
 
     }
-    else if(_angle < lastAngleRight && (actualTime - lastTimeRight) > interval){
+    else if(angle < lastAngleRight && (actualTime - lastTimeRight) > interval){
 
         lastTimeRight = actualTime;
         servoRight.write(lastAngleRight - velocity);   
@@ -53,15 +51,15 @@ void Servos::angleRight(int angle) {
 
 void Servos::angleLeft(int angle) {
     actualTime = millis();
-    int _angle = map(angle, 0, 100, 160, 25);
-    if(_angle > lastAngleLeft && (actualTime - lastTimeLeft) > interval){
+    int angle = map(angle, 0, 100, 160, 25);
+    if(angle > lastAngleLeft && (actualTime - lastTimeLeft) > interval){
 
         lastTimeLeft = actualTime;
         servoLeft.write(lastAngleLeft + velocity);  
         lastAngleLeft = lastAngleLeft + velocity;
 
     }
-    else if(_angle < lastAngleLeft && (actualTime - lastTimeLeft) > interval){
+    else if(angle < lastAngleLeft && (actualTime - lastTimeLeft) > interval){
 
         lastTimeLeft = actualTime;
         servoLeft.write(lastAngleLeft - velocity);   
@@ -71,8 +69,8 @@ void Servos::angleLeft(int angle) {
 }
 
 void Servos::attach(){
-    servoRight.attach(_rightPin); 
-    servoLeft.attach(_leftPin);
+    servoRight.attach(RIGHT_PIN); 
+    servoLeft.attach(LEFT_PIN);
 }
 
 void Servos::detach(){

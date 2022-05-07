@@ -69,22 +69,14 @@ abajo izquierda 160
 arriba izquierda 25
 
 */
-int angle = 90;
-int serie = 0;
+
 
 void setup(){
-    Serial.begin(115200);
-    Serial.setTimeout(10);
-    servos_init(D0, D3, 1);
+
 }
 
 void loop(){
-    serie = Serial.parseInt();
-    if(serie != 0){
-        angle = serie;
-        Serial.println(angle);
-    }
-    servos_angleLeft(angle);
+
 }
 
 
