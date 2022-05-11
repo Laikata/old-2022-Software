@@ -96,7 +96,7 @@ void moveServos(){
     }
     else if (direction > 180)
     {
-        direction -=360;
+        direction -= 360;
     }
     else if (direction < -180)
     {
