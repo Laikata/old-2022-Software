@@ -104,7 +104,7 @@ void moveServos(){
     }
     
 
-    float mappedDirection = map(direction, 0, 2 * PI, -50, 50) ;
+    float mappedDirection = map(direction, 0, 2 * PI, -50, 50);
 
     servo.angleRight(50 - mappedDirection);
     servo.angleLeft(50 + mappedDirection);
