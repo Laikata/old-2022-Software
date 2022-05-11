@@ -9,8 +9,8 @@ static const uint32_t GPSBaud = 9600;
 // The TinyGPSPlus object
 TinyGPSPlus gps;
 
-vec3_t *gps_position(){
-    vec3_t *pos = vec3_init(gps.location.lng(), gps.location.lat(), gps.altitude.meters());
+vec3_t gps_position(){
+    vec3_t pos = {gps.location.lng(), gps.location.lat(), gps.altitude.meters()};
     return pos;
 }
 

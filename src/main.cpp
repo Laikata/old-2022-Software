@@ -21,13 +21,11 @@ Servos servo(5);
 MPU9250 mpu;
 Adafruit_BMP085 bmp;
 DHT22 dht22(DHT22_PIN);
-vec3_t *g_destCord = NULL_VEC3;
+vec3_t g_destCord = {0, 0, 0};
 
 void setup(){
     EEPROM.begin(0x80);
     Wire.begin();
-
-    g_destCord = vec3_init(0, 0, 0);
 
     //TODO: Add calibrate branch to main repo
     mpu.setup(0x68);
@@ -58,9 +56,9 @@ void loop(){
         comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
     }
 
-    vec3_t *can_position = gps_position();
-    comms_gps(can_position->x, can_position->y, can_position->z);
-    float rotation = nav_angle(can_position, g_destCord, north_dir);
+    vec3_t can_position = gps_position();
+    comms_gps(can_position.x, can_position.y, can_position.z);
+    float rotation = nav_angle(&can_position, &g_destCord, north_dir);
 
     //   1. Voltaje bateria
     //   2. Temperatura
@@ -73,20 +71,17 @@ void loop(){
         float humidity = dht22.readHumidity();
         comms_env(temperature, humidity, pressure);
     }
-
-    // Liberar memoria alocada
 }
 
 
-void moveServos(){
+void moveServos(vec3_t *gps_pos, float mag_hoz){
     float direction;
     float realDirection = 0;
     static LowPassFilter lowPass;
 
-    calculate_direction(&direction, DEST_COORDS, gps_position()->x, gps_position()->y, 0);
-
+    calculate_direction(&direction, DEST_COORDS, gps_pos->x, gps_pos->y, 0);
     
-    realDirection = lowPass.low_pass(mpu.getMagHoz());
+    realDirection = lowPass.low_pass(mag_hoz);
     direction = map(direction, 0, 2 * PI, 0, 360);
 
     direction = direction - realDirection;
