@@ -38,7 +38,7 @@ void setup(){
     loadCalibration();
 }
 
-void moveServos();
+void moveServos(vec3_t *gps_pos, float mag_hoz);
 
 void loop(){
     // Programa de mover el servo empieza aqui :)
