@@ -14,6 +14,9 @@
 
 #define DHT22_PIN D4
 
+// LAT, LON, HEI
+#define DEST_COORDS 38.831541514133754, 0.10366977616384526, 0
+
 Servos servo(5);
 MPU9250 mpu;
 Adafruit_BMP085 bmp;
@@ -80,8 +83,7 @@ void moveServos(){
     float realDirection = 0;
     static LowPassFilter lowPass;
 
-    calculate_direction(&direction, 38.831541514133754 /*latitud de donde quieres ir */, 0.10366977616384526 /*longitud de donde quieres ir */,
-    0 /*altura de donde quieres ir */, gps_position()->x, gps_position()->y, 0);
+    calculate_direction(&direction, DEST_COORDS, gps_position()->x, gps_position()->y, 0);
 
     
     realDirection = lowPass.low_pass(mpu.getMagHoz());
