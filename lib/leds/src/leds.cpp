@@ -2,7 +2,7 @@
 
 #include <FastLED.h>
 
-CRGB leds[8];
+static CRGB leds[8];
 
 void initLeds(){
     FastLED.addLeds<WS2812B, D5, RGB>(leds, 8);
@@ -14,7 +14,7 @@ void updateLeds(){
 
     static unsigned long tNextLed = millis();
     static unsigned long tNextOff;
-    
+
     if (millis() > tNextLed) {
         tNextLed = millis() + 2000;
         if (valor >= 3.8) {
