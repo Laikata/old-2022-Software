@@ -9,18 +9,18 @@ void initLeds(){
 }
 
 void updateLeds(){
-    float valor = analogRead(A0);
-    valor = valor*4.7f/1023;
+    float value = analogRead(A0);
+    value = value*4.7f/1023;
 
     static unsigned long tNextLed = millis();
     static unsigned long tNextOff;
 
     if (millis() > tNextLed) {
         tNextLed = millis() + 2000;
-        if (valor >= 3.8) {
+        if (value >= 3.8) {
             leds[0] = CRGB::Green;
         }
-        else if (valor <= 3.6) {
+        else if (value <= 3.6) {
             leds[0] = CRGB::Red;
         }
         else {
