@@ -3,11 +3,14 @@
 #include <TinyGPSPlus.h>
 #include <vector.h>
 #include <stdint.h>
+#include <SoftwareSerial.h>
 
 static const uint32_t GPSBaud = 9600;
 
 // The TinyGPSPlus object
 TinyGPSPlus gps;
+
+SoftwareSerial gpsSerial (D6, D7);
 
 vec3_t gps_position(){
     vec3_t pos = {gps.location.lng(), gps.location.lat(), gps.altitude.meters()};
@@ -19,5 +22,5 @@ int gps_satellites(){
 }
 
 void gps_init(){
-    Serial.begin(GPSBaud);
+    gpsSerial.begin(GPSBaud);
 }
