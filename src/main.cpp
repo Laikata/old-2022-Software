@@ -36,7 +36,7 @@ void setup(){
     gps_init();
     servo.attach();
 
-    //Serial.println("Starting Program");
+    //Serial.println("Starting Program");;
 
     loadCalibration();
 }
