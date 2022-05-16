@@ -1,6 +1,5 @@
 #include <vector.h>
 #include <gps.h>
-#include <nav.h>
 #include <servos.h>
 #include <dir.h>
 #include <Arduino.h>
@@ -28,7 +27,6 @@ void setup(){
     EEPROM.begin(0x80);
     Wire.begin();
 
-    //TODO: Add calibrate branch to main repo
     mpu.setup(0x68);
     dht22.begin();
     bmp.begin();
@@ -43,7 +41,6 @@ void setup(){
 void moveServos(vec3_t *gps_pos, float mag_hoz);
 
 void loop(){
-    
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
 
@@ -59,12 +56,6 @@ void loop(){
         moveServos(&can_position, north_dir);
 
     }
-    float rotation = nav_angle(&can_position, &g_destCord, north_dir);
-
-    //   1. Voltaje bateria
-    //   2. Temperatura
-    //   3. Presión
-    // TODO: Read battery voltage
 
     if(dht22.available()) {
         float temperature = dht22.readTemperature(); // Do we read temp from the BMP085 or the DHT22?
@@ -72,6 +63,7 @@ void loop(){
         float humidity = dht22.readHumidity();
         comms_env(temperature, humidity, pressure);
     }
+    // TODO: Read battery voltage
 }
 
 
