@@ -30,7 +30,6 @@ void setup(){
 
     //TODO: Add calibrate branch to main repo
     mpu.setup(0x68);
-    PWR_MGMT_1
     dht22.begin();
     bmp.begin();
     gps_init();

@@ -1,4 +1,5 @@
 #include "comms.h"
+static uint32_t crc32(const uint8_t data[], size_t data_length);
 
 void comms_init() {
 	Serial.begin(9600);
