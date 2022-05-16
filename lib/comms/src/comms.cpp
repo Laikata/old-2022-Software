@@ -106,6 +106,18 @@ void comms_gps(float longitude, float latitude, float altitude) {
 	comms_send(data, data_size);
 }
 
+void comms_bat(float voltage) {
+	static const int data_size = sizeof(uint8_t) + sizeof(float);
+	uint8_t data[data_size];
+
+	float bige_vol = BigEndianFloat(voltage);
+
+	data[0] = 0x04;
+	memcpy(&data[1], &bige_vol, sizeof(float));
+
+	comms_send(data, data_size);
+}
+
 void comms_debug(char *msg[]) {
 	int data_size = sizeof(uint8_t) + strlen(*msg);
 	uint8_t data[data_size];
