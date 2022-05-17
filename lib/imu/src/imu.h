@@ -81,7 +81,7 @@ class MPU9250_ {
     // settings
     MPU9250Setting setting;
     // TODO: this should be configured!!
-    static constexpr uint8_t MAG_MODE {0x06};  // 0x02 for 8 Hz, 0x06 for 100 Hz continuous magnetometer data read
+    static constexpr uint8_t MAG_MODE {0x02};  // 0x02 for 8 Hz, 0x06 for 100 Hz continuous magnetometer data read
     float acc_resolution {0.f};                // scale resolutions per LSB for the sensors
     float gyro_resolution {0.f};               // scale resolutions per LSB for the sensors
     float mag_resolution {0.f};                // scale resolutions per LSB for the sensors
@@ -526,6 +526,7 @@ public:
             m[1] = (float)(mag_count[1] * mag_resolution * mag_bias_factory[1] - mag_bias[1] * bias_to_current_bits) * mag_scale[1];
             m[2] = (float)(mag_count[2] * mag_resolution * mag_bias_factory[2] - mag_bias[2] * bias_to_current_bits) * mag_scale[2];
         }
+        
     }
 
 private:
@@ -535,8 +536,10 @@ private:
             uint8_t raw_data[7];                                             // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
             read_bytes(AK8963_ADDRESS, AK8963_XOUT_L, 7, &raw_data[0]);      // Read the six raw data and ST2 registers sequentially into data array
             if (MAG_MODE == 0x02 || MAG_MODE == 0x04 || MAG_MODE == 0x06) {  // continuous or external trigger read mode
-                if ((st1 & 0x02) != 0)                                       // check if data is not skipped
-                    return false;                                            // this should be after data reading to clear DRDY register
+                if ((st1 & 0x02) != 0)
+                    return false;  
+                                                     // check if data is not skipped
+                                                           // this should be after data reading to clear DRDY register
             }
 
             uint8_t c = raw_data[6];                                         // End data read by reading ST2 register
