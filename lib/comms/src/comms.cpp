@@ -118,7 +118,7 @@ void comms_bat(float voltage) {
 	comms_send(data, data_size);
 }
 
-void comms_debug(char msg[], ...) {
+void comms_debug(const char msg[], ...) {
 	va_list args;
 	va_start(args, msg);
 	int size = vsnprintf(nullptr, 0, msg, args) + 1;
