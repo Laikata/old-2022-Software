@@ -78,4 +78,4 @@ void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz);
 void comms_env(float temp, float humidity, float pressure);
 void comms_gps(float longitude, float latitude, float altitude);
 void comms_bat(float voltage);
-void comms_debug(char *msg[]);
+void comms_debug(char msg[]);

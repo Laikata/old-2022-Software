@@ -118,12 +118,12 @@ void comms_bat(float voltage) {
 	comms_send(data, data_size);
 }
 
-void comms_debug(char *msg[]) {
-	int data_size = sizeof(uint8_t) + strlen(*msg);
+void comms_debug(char msg[]) {
+	int data_size = sizeof(uint8_t) + strlen(msg);
 	uint8_t data[data_size];
 
 	data[0] = 0x05;
-	memcpy(&data[1], *msg, data_size - 1);
+	memcpy(&data[1], msg, data_size - 1);
 
 	comms_send(data, data_size);
 }
