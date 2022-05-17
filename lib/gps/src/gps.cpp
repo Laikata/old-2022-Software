@@ -1,9 +1,5 @@
 #include "gps.h"
-#include <Arduino.h>
-#include <TinyGPSPlus.h>
-#include <vector.h>
-#include <stdint.h>
-#include <SoftwareSerial.h>
+
 
 static const uint32_t GPSBaud = 9600;
 
@@ -34,51 +30,49 @@ void gps_init(){
 
 void displayInfo()
 {
-  Serial.print(F("Location: ")); 
+  comms_debug("Location: "); 
   if (gps.location.isValid())
   {
-    Serial.print(gps.location.lat(), 6);
-    Serial.print(F(","));
-    Serial.print(gps.location.lng(), 6);
+    comms_debug(gps.location.lat(), 6);
+    comms_debug(F(","));
+    comms_debug(gps.location.lng(), 6);
   }
   else
   {
-    Serial.print(F("INVALID"));
+    comms_debug(F("INVALID"));
   }
 
-  Serial.print(F("  Date/Time: "));
+  comms_debug(F("  Date/Time: "));
   if (gps.date.isValid())
   {
-    Serial.print(gps.date.month());
-    Serial.print(F("/"));
-    Serial.print(gps.date.day());
-    Serial.print(F("/"));
-    Serial.print(gps.date.year());
+    comms_debug("%c", gps.date.month());
+    comms_debug(F("/"));
+    comms_debug(gps.date.day());
+    comms_debug(F("/"));
+    comms_debug(gps.date.year());
   }
   else
   {
-    Serial.print(F("INVALID"));
+    comms_debug(F("INVALID"));
   }
 
-  Serial.print(F(" "));
+  comms_debug(F(" "));
   if (gps.time.isValid())
   {
-    if (gps.time.hour() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.hour());
-    Serial.print(F(":"));
-    if (gps.time.minute() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.minute());
-    Serial.print(F(":"));
-    if (gps.time.second() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.second());
-    Serial.print(F("."));
-    if (gps.time.centisecond() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.centisecond());
+    if (gps.time.hour() < 10) comms_debug(F("0"));
+    comms_debug(gps.time.hour());
+    comms_debug(F(":"));
+    if (gps.time.minute() < 10) comms_debug(F("0"));
+    comms_debug(gps.time.minute());
+    comms_debug(F(":"));
+    if (gps.time.second() < 10) comms_debug(F("0"));
+    comms_debug(gps.time.second());
+    comms_debug(F("."));
+    if (gps.time.centisecond() < 10) comms_debug(F("0"));
+    comms_debug(gps.time.centisecond());
   }
   else
   {
-    Serial.print(F("INVALID"));
+    comms_debug(F("INVALID"));
   }
-
-  Serial.println();
 }
