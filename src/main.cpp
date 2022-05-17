@@ -48,7 +48,6 @@ void loop(){
     float north_dir = 0;
     if(mpu.update()) {
         north_dir = mpu.getMagHoz();
-        Serial.printf("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
         vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
         vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
         vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
@@ -78,9 +77,9 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     direction = map(direction, 0, 2 * PI, 0, 360);
 
     direction = direction - realDirection;
-    Serial.printf("DIR: %g\n", direction);
-    Serial.printf("REALDIR: %g\n", realDirection);
-    Serial.printf("MAGHOZ: %g\n", mag_hoz);
+    comms_debug("DIR: %g\n", direction);
+    comms_debug("REALDIR: %g\n", realDirection);
+    comms_debug("MAGHOZ: %g\n", mag_hoz);
 
     float mappedDirection = map(direction, -180, 180, -50, 50);
 
