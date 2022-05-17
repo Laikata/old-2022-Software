@@ -18,7 +18,7 @@ unsigned long actualTime = 0;
 unsigned long lastTimeLeft = 0;
 unsigned long lastTimeRight = 0;
 
-unsigned long interval = 10;
+unsigned long interval = 1;
 
 int velocity = 0;
 
