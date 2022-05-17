@@ -133,35 +133,6 @@ void comms_debug(const char msg[], ...) {
 	comms_send(data, data_size - 1);
 }
 
-int comms_recv(char *data[]) {
-	uint8_t packet_size = 0;
-	Serial.readBytes(&packet_size, 1);
-
-    uint8_t counter = 0;
-    Serial.readBytes(&counter, 1);
-
-	uint8_t packet_data[packet_size + 1];
-	Serial.readBytes(packet_data, packet_size);
-	packet_data[packet_size] = '\0';
-
-	uint8_t crc32_buffer[4];
-	Serial.readBytes(crc32_buffer, 4);
-	uint32_t checksum = ( ((uint32_t) crc32_buffer[0]) << 24) +
-						( ((uint32_t) crc32_buffer[1]) << 16) +
-						(crc32_buffer[2] << 8) +
-						crc32_buffer[3];
-
-
-	if (checksum != crc32(packet_data, packet_size)) {
-		// Checksums do not match!
-		return 1;
-	}
-
-	data = (char **) packet_data;
-
-	return 0;
-}
-
 static uint32_t crc32(const uint8_t data[], size_t data_length) {
 	uint32_t crc32 = 0xFFFFFFFFu;
 	
