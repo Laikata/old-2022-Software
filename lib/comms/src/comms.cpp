@@ -1,4 +1,5 @@
 #include "comms.h"
+static uint32_t crc32(const uint8_t data[], size_t data_length);
 
 void comms_init() {
 	Serial.begin(9600);
@@ -103,6 +104,33 @@ void comms_gps(float longitude, float latitude, float altitude) {
 	memcpy(&data[9], &bige_alt, sizeof(float));
 
 	comms_send(data, data_size);
+}
+
+void comms_bat(float voltage) {
+	static const int data_size = sizeof(uint8_t) + sizeof(float);
+	uint8_t data[data_size];
+
+	float bige_vol = BigEndianFloat(voltage);
+
+	data[0] = 0x04;
+	memcpy(&data[1], &bige_vol, sizeof(float));
+
+	comms_send(data, data_size);
+}
+
+void comms_debug(char msg[], ...) {
+	va_list args;
+	va_start(args, msg);
+	int size = vsnprintf(nullptr, 0, msg, args) + 1;
+
+	int data_size = sizeof(uint8_t) + size;
+	uint8_t data[data_size];
+
+	data[0] = 0x05;
+	vsnprintf(reinterpret_cast<char *>(data + 1), size, msg, args);
+    va_end(args);
+
+	comms_send(data, data_size - 1);
 }
 
 int comms_recv(char *data[]) {

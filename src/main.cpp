@@ -1,6 +1,5 @@
 #include <vector.h>
 #include <gps.h>
-#include <nav.h>
 #include <servos.h>
 #include <dir.h>
 #include <Arduino.h>
@@ -32,6 +31,7 @@ void setup(){
     Wire.begin();
     delay(2000); //Pausa para que no se asuste el IMU
 
+
     //TODO: Add calibrate branch to main repo
     //mpu.setup(0x68);
     mpu.verbose(true);
@@ -42,6 +42,7 @@ void setup(){
     }
     
     //PWR_MGMT_1
+
     dht22.begin();
     bmp.begin();
     gps_init();
@@ -60,12 +61,12 @@ void moveServos(vec3_t *gps_pos, float mag_hoz);
 
 
 void loop(){
-    
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
     Serial.printf("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
 
     // Recibir datos sensores
+
     static float north_dir = 0;
 
     static uint32_t next_mag_read = millis() + magReadInterval;
@@ -91,6 +92,7 @@ void loop(){
     //   3. Presión
     // TODO: Read battery voltage
 
+
     static float VBat = -1.f;
     static uint32_t next_sensors_read = millis() + sensorReadInterval;
     if(millis() > next_sensors_read) {  
@@ -104,6 +106,7 @@ void loop(){
         Serial.printf("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
         next_sensors_read = millis() + sensorReadInterval;
     }
+    // TODO: Read battery voltage
 }
 
 
@@ -118,9 +121,9 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     direction = map(direction, 0, 2 * PI, 0, 360);
 
     direction = direction - realDirection;
-    Serial.printf("DIR: %g\n", direction);
-    Serial.printf("REALDIR: %g\n", realDirection);
-    Serial.printf("MAGHOZ: %g\n", mag_hoz);
+    comms_debug("DIR: %g\n", direction);
+    comms_debug("REALDIR: %g\n", realDirection);
+    comms_debug("MAGHOZ: %g\n", mag_hoz);
 
     float mappedDirection = map(direction, -180, 180, -50, 50);
 
