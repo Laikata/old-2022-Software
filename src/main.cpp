@@ -127,8 +127,8 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
 
     float mappedDirection = map(direction, -180, 180, -50, 50);
 
-    servo.angleRight(50 - mappedDirection);
-    servo.angleLeft(50 + mappedDirection);
+    servo.angleRight(50 + mappedDirection);
+    servo.angleLeft(50 - mappedDirection);
 
     comms_debug("%f	", direction);
 }

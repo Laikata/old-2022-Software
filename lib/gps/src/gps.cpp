@@ -33,46 +33,46 @@ void displayInfo()
   comms_debug("Location: "); 
   if (gps.location.isValid())
   {
-    comms_debug(gps.location.lat(), 6);
-    comms_debug(F(","));
-    comms_debug(gps.location.lng(), 6);
+    comms_debug("%lf", gps.location.lat());
+    comms_debug(",");
+    comms_debug("%lf", gps.location.lng());
   }
   else
   {
-    comms_debug(F("INVALID"));
+    comms_debug("INVALID");
   }
 
-  comms_debug(F("  Date/Time: "));
+  comms_debug("  Date/Time: ");
   if (gps.date.isValid())
   {
     comms_debug("%c", gps.date.month());
-    comms_debug(F("/"));
-    comms_debug(gps.date.day());
-    comms_debug(F("/"));
-    comms_debug(gps.date.year());
+    comms_debug("/");
+    comms_debug("%c", gps.date.day());
+    comms_debug("/");
+    comms_debug("%c", gps.date.year());
   }
   else
   {
-    comms_debug(F("INVALID"));
+    comms_debug("INVALID");
   }
 
-  comms_debug(F(" "));
+  comms_debug(" ");
   if (gps.time.isValid())
   {
-    if (gps.time.hour() < 10) comms_debug(F("0"));
-    comms_debug(gps.time.hour());
-    comms_debug(F(":"));
-    if (gps.time.minute() < 10) comms_debug(F("0"));
-    comms_debug(gps.time.minute());
-    comms_debug(F(":"));
-    if (gps.time.second() < 10) comms_debug(F("0"));
-    comms_debug(gps.time.second());
-    comms_debug(F("."));
-    if (gps.time.centisecond() < 10) comms_debug(F("0"));
-    comms_debug(gps.time.centisecond());
+    if (gps.time.hour() < 10) comms_debug("0");
+    comms_debug("%c", gps.time.hour());
+    comms_debug(":");
+    if (gps.time.minute() < 10) comms_debug("0");
+    comms_debug("%c", gps.time.minute());
+    comms_debug(":");
+    if (gps.time.second() < 10) comms_debug("0");
+    comms_debug("%c", gps.time.second());
+    comms_debug(".");
+    if (gps.time.centisecond() < 10) comms_debug("0");
+    comms_debug("%c", gps.time.centisecond());
   }
   else
   {
-    comms_debug(F("INVALID"));
+    comms_debug("INVALID");
   }
 }
