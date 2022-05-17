@@ -37,7 +37,7 @@ void setup(){
     mpu.verbose(true);
 
     while (!mpu.setup(0x68)) {
-        Serial.println("MPU connection failed. Will try again in 2s.");
+        comms_debug("MPU connection failed. Will try again in 2s.");
         delay(2000);
     }
     
@@ -48,7 +48,7 @@ void setup(){
     gps_init();
     servo.attach();
 
-    Serial.println("Starting Program");;
+    comms_debug("Starting Program");;
 
     loadCalibration();
     printCalibration();
@@ -63,7 +63,7 @@ void moveServos(vec3_t *gps_pos, float mag_hoz);
 void loop(){
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
-    Serial.printf("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
+    comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
 
     // Recibir datos sensores
 
@@ -73,8 +73,8 @@ void loop(){
     if (millis() > next_mag_read) {
         if(mpu.update()) {
             north_dir = mpu.getMagHoz();
-            //Serial.printf("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
-            //Serial.printf("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
+            //Comms_debugf("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
+            //Comms_debugf("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
             next_mag_read = millis() + 125;
             vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
             vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
@@ -103,7 +103,7 @@ void loop(){
         float pressure = bmp.readPressure();
         float humidity = dht22.readHumidity();
         comms_env(temperature, humidity, pressure);
-        Serial.printf("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
+        comms_debug("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
         next_sensors_read = millis() + sensorReadInterval;
     }
     // TODO: Read battery voltage
@@ -130,5 +130,5 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     servo.angleRight(50 - mappedDirection);
     servo.angleLeft(50 + mappedDirection);
 
-    Serial.println(direction);
+    comms_debug("%f	", direction);
 }
