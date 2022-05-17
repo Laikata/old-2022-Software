@@ -8,11 +8,14 @@
 #include <Adafruit_BMP085.h>
 #include <ErriezDHT22.h>
 #include <imu.h>
+//#include <MPU9250.h>
 #include "eeprom_utils.h"
 #include <LowPass.h>
 
 #define DHT22_PIN D4
 
+#define magReadInterval 125         //ms between magnetometer reads
+#define sensorReadInterval 500      //ms between environment sensor readout 
 // LAT, LON, HEI
 #define DEST_COORDS 38.831541514133754, 0.10366977616384526, 0
 
@@ -26,41 +29,82 @@ void setup(){
     Serial.begin(9600);
     EEPROM.begin(0x80);
     Wire.begin();
+    delay(2000); //Pausa para que no se asuste el IMU
 
-    mpu.setup(0x68);
+
+    //TODO: Add calibrate branch to main repo
+    //mpu.setup(0x68);
+    mpu.verbose(true);
+
+    while (!mpu.setup(0x68)) {
+        comms_debug("MPU connection failed. Will try again in 2s.");
+        delay(2000);
+    }
+    
+    //PWR_MGMT_1
+
     dht22.begin();
     bmp.begin();
     gps_init();
     servo.attach();
 
-    //Serial.println("Starting Program");
+    comms_debug("Starting Program");;
 
     loadCalibration();
+    printCalibration();
+    delay(1000);
+    mpu.verbose(false);
 }
 
 void moveServos(vec3_t *gps_pos, float mag_hoz);
 
+
+
 void loop(){
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
+    comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
 
     // Recibir datos sensores
-    float north_dir = 0;
-    if(mpu.update()) {
-        north_dir = mpu.getMagHoz();
-        vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
-        vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
-        vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
-        comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
-        moveServos(&can_position, north_dir);
 
+    static float north_dir = 0;
+
+    static uint32_t next_mag_read = millis() + magReadInterval;
+    if (millis() > next_mag_read) {
+        if(mpu.update()) {
+            north_dir = mpu.getMagHoz();
+            //Comms_debugf("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
+            //Comms_debugf("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
+            next_mag_read = millis() + 125;
+            vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
+            vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
+            vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
+            comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
+        }
+        
     }
 
-    if(dht22.available()) {
+    moveServos(&can_position, north_dir);
+    //float rotation = nav_angle(&can_position, &g_destCord, north_dir);
+
+    //   1. Voltaje bateria
+    //   2. Temperatura
+    //   3. Presión
+    // TODO: Read battery voltage
+
+
+    static float VBat = -1.f;
+    static uint32_t next_sensors_read = millis() + sensorReadInterval;
+    if(millis() > next_sensors_read) {  
+        float VRead = analogRead(A0);
+        VBat = VRead * 4.7/1023; //150k resistor in series
+        dht22.available();      
         float temperature = dht22.readTemperature(); // Do we read temp from the BMP085 or the DHT22?
         float pressure = bmp.readPressure();
         float humidity = dht22.readHumidity();
         comms_env(temperature, humidity, pressure);
+        comms_debug("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
+        next_sensors_read = millis() + sensorReadInterval;
     }
     // TODO: Read battery voltage
 }
@@ -86,5 +130,5 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     servo.angleRight(50 - mappedDirection);
     servo.angleLeft(50 + mappedDirection);
 
-    //Serial.println(direction);
+    comms_debug("%f	", direction);
 }
