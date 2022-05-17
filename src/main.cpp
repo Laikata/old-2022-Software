@@ -12,6 +12,8 @@
 //#include <MPU9250.h>
 #include "eeprom_utils.h"
 #include <LowPass.h>
+#include <FastLED.h>
+#include <SoftwareSerial.h>
 
 #define DHT22_PIN D4
 
@@ -19,19 +21,26 @@
 #define sensorReadInterval 500      //ms between environment sensor readout 
 // LAT, LON, HEI
 #define DEST_COORDS 38.831541514133754, 0.10366977616384526, 0
+#define NUM_LEDS 8
+#define DATA_PIN D5
+#define PeriodoParpadeo 2000
+#define TiempoParpadeo 25 
+
 
 Servos servo(5);
 MPU9250 mpu;
 Adafruit_BMP085 bmp;
 DHT22 dht22(DHT22_PIN);
 vec3_t g_destCord = {0, 0, 0};
+static CRGB leds[NUM_LEDS];
 
 void setup(){
+    
     Serial.begin(9600);
     EEPROM.begin(0x80);
     Wire.begin();
     delay(2000); //Pausa para que no se asuste el IMU
-
+ FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
     //TODO: Add calibrate branch to main repo
     //mpu.setup(0x68);
     mpu.verbose(true);
@@ -104,7 +113,30 @@ void loop(){
         Serial.printf("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
         next_sensors_read = millis() + sensorReadInterval;
     }
+    static unsigned long tNextLed = millis();
+    static unsigned long tNextOff;
+
+    if (millis() > tNextLed) {
+        tNextLed = millis() + PeriodoParpadeo;
+        if (VBat >= 3.8) {
+            leds[0] = CRGB::Green;
+        }else if (VBat > 3.6) {
+            leds[0] = CRGB::Orange;
+        }else {
+            leds[0] = CRGB::Red;
+        }
+    }
+    //to do GPS//
+
+  
+    UltimaLectura = millis();
+
+
+
+  
+
 }
+
 
 
 void moveServos(vec3_t *gps_pos, float mag_hoz){
@@ -129,3 +161,10 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
 
     Serial.println(direction);
 }
+
+static CRGB leds[NUM_LEDS];
+
+
+
+
+
