@@ -129,6 +129,7 @@ void loop(){
         float pressure = bmp.readPressure();
         float humidity = dht22.readHumidity();
         comms_env(temperature, humidity, pressure);
+        //hacer tx bateria
         Serial.printf("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
         next_sensors_read = millis() + sensorReadInterval;
     }
