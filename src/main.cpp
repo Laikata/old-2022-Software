@@ -78,20 +78,30 @@ void loop(){
     static float north_dir = 0;
 
     static uint32_t next_mag_read = millis() + magReadInterval;
+    static uint32_t last_mag_read = millis();
     if (millis() > next_mag_read) {
         if(mpu.update()) {
             north_dir = mpu.getMagHoz();
             //Serial.printf("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
             //Serial.printf("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
-            next_mag_read = millis() + 125;
+            next_mag_read = millis() + magReadInterval;
             vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
             vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
             vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
             comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
+            last_mag_read = millis();
+        }
+        if(millis()> last_mag_read + 2000){
+            leds[4] = CRGB::Red;
+        }
+        else {
+            leds[4] = CRGB::Green;
         }
         
     }
 
+
+    
     moveServos(&can_position, north_dir);
     //float rotation = nav_angle(&can_position, &g_destCord, north_dir);
 
@@ -101,11 +111,20 @@ void loop(){
     // TODO: Read battery voltage
 
     static float VBat = -1.f;
+    static bool VDht22 = true;
     static uint32_t next_sensors_read = millis() + sensorReadInterval;
+    static uint32_t last_dht_read = millis();
     if(millis() > next_sensors_read) {  
         float VRead = analogRead(A0);
         VBat = VRead * 4.7/1023; //150k resistor in series
-        dht22.available();      
+        VDht22 = dht22.available();      
+        if (VDht22 == true){
+            last_dht_read = millis();
+            leds[6] = CRGB::Green;
+        }else if(millis() > last_dht_read + 5000){
+            leds[6] = CRGB::Red;
+        }
+
         float temperature = dht22.readTemperature(); // Do we read temp from the BMP085 or the DHT22?
         float pressure = bmp.readPressure();
         float humidity = dht22.readHumidity();
@@ -116,6 +135,7 @@ void loop(){
     static unsigned long tNextLed = millis();
     static unsigned long tNextOff;
 
+    
     if (millis() > tNextLed) {
         tNextLed = millis() + PeriodoParpadeo;
         if (VBat >= 3.8) {
@@ -125,15 +145,19 @@ void loop(){
         }else {
             leds[0] = CRGB::Red;
         }
+        FastLED.show();
+        tNextOff = millis() + TiempoParpadeo;
+
+    }
+    if (millis()>tNextOff){
+        for (int i = 0; i < 8; i++)
+        {
+            leds[i] = CRGB::Black;
+        }
+        FastLED.show();
+        tNextOff = millis()+ 999999999;
     }
     //to do GPS//
-
-  
-    UltimaLectura = millis();
-
-
-
-  
 
 }
 
@@ -161,8 +185,6 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
 
     Serial.println(direction);
 }
-
-static CRGB leds[NUM_LEDS];
 
 
 
