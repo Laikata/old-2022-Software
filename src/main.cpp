@@ -82,6 +82,8 @@ void loop(){
     if (millis() > next_mag_read) {
         if(mpu.update()) {
             north_dir = mpu.getMagHoz();
+            comms_debug("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
+            comms_debug("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
             next_mag_read = millis() + magReadInterval;
             vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
             vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
@@ -187,8 +189,3 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
 
     comms_debug("%f	", direction);
 }
-
-
-
-
-
