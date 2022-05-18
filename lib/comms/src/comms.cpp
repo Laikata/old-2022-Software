@@ -1,4 +1,5 @@
 #include "comms.h"
+static uint32_t crc32(const uint8_t data[], size_t data_length);
 
 void comms_init() {
 	Serial.begin(9600);
@@ -105,33 +106,31 @@ void comms_gps(float longitude, float latitude, float altitude) {
 	comms_send(data, data_size);
 }
 
-int comms_recv(char *data[]) {
-	uint8_t packet_size = 0;
-	Serial.readBytes(&packet_size, 1);
+void comms_bat(float voltage) {
+	static const int data_size = sizeof(uint8_t) + sizeof(float);
+	uint8_t data[data_size];
 
-    uint8_t counter = 0;
-    Serial.readBytes(&counter, 1);
+	float bige_vol = BigEndianFloat(voltage);
 
-	uint8_t packet_data[packet_size + 1];
-	Serial.readBytes(packet_data, packet_size);
-	packet_data[packet_size] = '\0';
+	data[0] = 0x04;
+	memcpy(&data[1], &bige_vol, sizeof(float));
 
-	uint8_t crc32_buffer[4];
-	Serial.readBytes(crc32_buffer, 4);
-	uint32_t checksum = ( ((uint32_t) crc32_buffer[0]) << 24) +
-						( ((uint32_t) crc32_buffer[1]) << 16) +
-						(crc32_buffer[2] << 8) +
-						crc32_buffer[3];
+	comms_send(data, data_size);
+}
 
+void comms_debug(const char msg[], ...) {
+	va_list args;
+	va_start(args, msg);
+	int size = vsnprintf(nullptr, 0, msg, args) + 1;
 
-	if (checksum != crc32(packet_data, packet_size)) {
-		// Checksums do not match!
-		return 1;
-	}
+	int data_size = sizeof(uint8_t) + size;
+	uint8_t data[data_size];
 
-	data = (char **) packet_data;
+	data[0] = 0x05;
+	vsnprintf(reinterpret_cast<char *>(data + 1), size, msg, args);
+    va_end(args);
 
-	return 0;
+	comms_send(data, data_size - 1);
 }
 
 static uint32_t crc32(const uint8_t data[], size_t data_length) {

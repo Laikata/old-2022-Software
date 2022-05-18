@@ -1,6 +1,5 @@
 #include <vector.h>
 #include <gps.h>
-#include <nav.h>
 #include <servos.h>
 #include <dir.h>
 #include <Arduino.h>
@@ -46,17 +45,18 @@ void setup(){
     mpu.verbose(true);
 
     while (!mpu.setup(0x68)) {
-        Serial.println("MPU connection failed. Will try again in 2s.");
+        comms_debug("MPU connection failed. Will try again in 2s.");
         delay(2000);
     }
     
     //PWR_MGMT_1
+
     dht22.begin();
     bmp.begin();
     gps_init();
     servo.attach();
 
-    Serial.println("Starting Program");;
+    comms_debug("Starting Program");;
 
     loadCalibration();
     printCalibration();
@@ -69,12 +69,12 @@ void moveServos(vec3_t *gps_pos, float mag_hoz);
 
 
 void loop(){
-    
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
-    Serial.printf("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
+    comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
 
     // Recibir datos sensores
+
     static float north_dir = 0;
 
     static uint32_t next_mag_read = millis() + magReadInterval;
@@ -82,8 +82,6 @@ void loop(){
     if (millis() > next_mag_read) {
         if(mpu.update()) {
             north_dir = mpu.getMagHoz();
-            //Serial.printf("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
-            //Serial.printf("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
             next_mag_read = millis() + magReadInterval;
             vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
             vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
@@ -109,6 +107,7 @@ void loop(){
     //   2. Temperatura
     //   3. Presión
     // TODO: Read battery voltage
+
 
     static float VBat = -1.f;
     static bool VDht22 = true;
@@ -157,9 +156,11 @@ void loop(){
         }
         FastLED.show();
         tNextOff = millis()+ 999999999;
+      
+        comms_debug("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
+        next_sensors_read = millis() + sensorReadInterval;
     }
-    //to do GPS//
-
+    // TODO: Read battery voltage
 }
 
 
@@ -175,16 +176,16 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     direction = map(direction, 0, 2 * PI, 0, 360);
 
     direction = direction - realDirection;
-    Serial.printf("DIR: %g\n", direction);
-    Serial.printf("REALDIR: %g\n", realDirection);
-    Serial.printf("MAGHOZ: %g\n", mag_hoz);
+    comms_debug("DIR: %g\n", direction);
+    comms_debug("REALDIR: %g\n", realDirection);
+    comms_debug("MAGHOZ: %g\n", mag_hoz);
 
     float mappedDirection = map(direction, -180, 180, -50, 50);
 
-    servo.angleRight(50 - mappedDirection);
-    servo.angleLeft(50 + mappedDirection);
+    servo.angleRight(50 + mappedDirection);
+    servo.angleLeft(50 - mappedDirection);
 
-    Serial.println(direction);
+    comms_debug("%f	", direction);
 }
 
 
