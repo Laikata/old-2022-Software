@@ -71,7 +71,7 @@ void moveServos(vec3_t *gps_pos, float mag_hoz);
 void loop(){
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
-    comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
+    ///comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
 
     // Recibir datos sensores
 
@@ -82,9 +82,9 @@ void loop(){
     if (millis() > next_mag_read) {
         if(mpu.update()) {
             north_dir = mpu.getMagHoz();
-            comms_debug("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
-            comms_debug("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
-            next_mag_read = millis() + magReadInterval;
+            Serial.printf("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
+            Serial.printf("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
+            next_mag_read = millis() + 125;
             vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
             vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
             vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
@@ -130,39 +130,18 @@ void loop(){
         float pressure = bmp.readPressure();
         float humidity = dht22.readHumidity();
         comms_env(temperature, humidity, pressure);
-        //hacer tx bateria
-        Serial.printf("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
-        next_sensors_read = millis() + sensorReadInterval;
-    }
-    static unsigned long tNextLed = millis();
-    static unsigned long tNextOff;
-
-    
-    if (millis() > tNextLed) {
-        tNextLed = millis() + PeriodoParpadeo;
-        if (VBat >= 3.8) {
-            leds[0] = CRGB::Green;
-        }else if (VBat > 3.6) {
-            leds[0] = CRGB::Orange;
-        }else {
-            leds[0] = CRGB::Red;
-        }
-        FastLED.show();
-        tNextOff = millis() + TiempoParpadeo;
-
-    }
-    if (millis()>tNextOff){
-        for (int i = 0; i < 8; i++)
-        {
-            leds[i] = CRGB::Black;
-        }
-        FastLED.show();
-        tNextOff = millis()+ 999999999;
-      
-        comms_debug("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
+        ///comms_debug("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
         next_sensors_read = millis() + sensorReadInterval;
     }
     // TODO: Read battery voltage
+}
+
+float ErrorDireccion(float bearing, float target){
+    float error = bearing - target;
+    if(error == 0) return 0;
+    if(error > 180) error -= 360;
+    if(error < -180) error += 360;
+    return error;
 }
 
 
@@ -170,6 +149,7 @@ void loop(){
 void moveServos(vec3_t *gps_pos, float mag_hoz){
     float direction;
     float realDirection = 0;
+    float error = 0;
     static LowPassFilter lowPass;
 
     calculate_direction(&direction, DEST_COORDS, gps_pos->x, gps_pos->y, 0);
@@ -177,15 +157,25 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     realDirection = lowPass.low_pass(mag_hoz);
     direction = map(direction, 0, 2 * PI, 0, 360);
 
-    direction = direction - realDirection;
-    comms_debug("DIR: %g\n", direction);
-    comms_debug("REALDIR: %g\n", realDirection);
-    comms_debug("MAGHOZ: %g\n", mag_hoz);
+    error = ErrorDireccion(direction, realDirection);
 
-    float mappedDirection = map(direction, -180, 180, -50, 50);
+    /*comms_debug("DIR: %g\n", direction);
+    comms_debug("REALDIR: %g\n", realDirection);
+    comms_debug("MAGHOZ: %g\n", mag_hoz);*/
+    Serial.printf("DIR: %g\n", direction);
+    Serial.printf("REALDIR: %g\n", realDirection);
+    ///comms_debug("MAGHOZ: %g\n", mag_hoz);
+    Serial.printf("ERROR: %g\n", error);
+
+    float mappedDirection = error * 0.5;
+    //qwertyuiop
+
+    ///comms_debug("MAPPEDDIR %g\n", mappedDirection);
 
     servo.angleRight(50 + mappedDirection);
     servo.angleLeft(50 - mappedDirection);
 
-    comms_debug("%f	", direction);
+    ///comms_debug("%f	", direction);
 }
+
+
