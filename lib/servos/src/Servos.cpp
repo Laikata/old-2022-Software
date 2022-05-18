@@ -71,11 +71,17 @@ void Servos::angleLeft(int angle) {
 void Servos::attach(){
     servoRight.attach(RIGHT_PIN); 
     servoLeft.attach(LEFT_PIN);
+    this->attached = true;
 }
 
 void Servos::detach(){
     servoRight.detach();
     servoLeft.detach();
+    this->attached = false;
+}
+
+bool Servos::isAttached(){
+    return this->attached;
 }
 
 //  :)

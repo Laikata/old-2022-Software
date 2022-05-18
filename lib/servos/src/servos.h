@@ -8,6 +8,7 @@ class Servos
     void angleLeft(int angle);
     void attach();
     void detach();
+    bool isAttached();
   private:
     int lastAngleRight;
     int lastAngleLeft;
@@ -15,4 +16,5 @@ class Servos
     unsigned long lastTimeLeft;
     unsigned long lastTimeRight;
     unsigned long interval;
+    bool attached;
 };
