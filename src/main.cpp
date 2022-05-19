@@ -40,16 +40,13 @@ void setup(){
     Wire.begin();
     delay(2000); //Pausa para que no se asuste el IMU
     FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
-    //TODO: Add calibrate branch to main repo
-    //mpu.setup(0x68);
-    mpu.verbose(true);
+
+    mpu.verbose(true); //TODO: remove this for final build
 
     while (!mpu.setup(0x68)) {
         comms_debug("MPU connection failed. Will try again in 2s.");
         delay(2000);
     }
-    
-    //PWR_MGMT_1
 
     dht22.begin();
     bmp.begin();
@@ -115,6 +112,7 @@ void loop(){
             dht22_last_read = millis();
         } 
         else if(millis() > dht22_last_read + 2000){
+            // If DHT22 hasn't read in a long time we set the LED to red
             leds[6] = CRGB::Red;
         }
 
@@ -125,6 +123,7 @@ void loop(){
         next_sensors_read = millis() + SENSOR_READ_INTERVAL;
     }
 
+    // LEDs will blink for BLINK_DURATION, then set off for BLINK_COOLDOWN
     static unsigned long tNextBlink = millis();
     static unsigned long tNextOff;
     
@@ -139,7 +138,6 @@ void loop(){
         }
         FastLED.show();
         tNextOff = millis() + BLINK_DURATION;
-
     }
     if (millis() >= tNextOff){
         for (int i = 0; i < 8; i++)
