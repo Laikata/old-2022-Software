@@ -7,8 +7,8 @@
 #include <comms.h>
 #include <Adafruit_BMP085.h>
 #include <ErriezDHT22.h>
+#include <MPU9250.h>
 #include <imu.h>
-//#include <MPU9250.h>
 #include "eeprom_utils.h"
 #include <LowPass.h>
 #include <FastLED.h>
@@ -32,12 +32,6 @@ Adafruit_BMP085 bmp;
 DHT22 dht22(DHT22_PIN);
 vec3_t g_destCord = {0, 0, 0};
 static CRGB leds[NUM_LEDS];
-
-
-
-
-
-
 
 void setup(){
     
@@ -89,13 +83,14 @@ void loop(){
     static uint32_t last_mag_read = millis();
     if (millis() > next_mag_read) {
         if(mpu.update()) {
-            north_dir = mpu.getMagHoz();
-            comms_debug("Acc: (%g, %g, %g)\n", mpu.getAccX(), mpu.getAccY(), mpu.getAccZ());
-            comms_debug("MAGN: (%g, %g, %g)\n", mpu.getMagX(), mpu.getMagY(), mpu.getMagZ());
             next_mag_read = millis() + magReadInterval;
             vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
+            north_dir = imu_magHoz(magnetometer.x, magnetometer.y);
             vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
             vec3_t accelerometer = {mpu.getAccX(), mpu.getAccY(), mpu.getAccZ()};
+            comms_debug("Acc: (%g, %g, %g)\n", accelerometer.x, accelerometer.y, accelerometer.z);
+            comms_debug("MAGN: (%g, %g, %g)\n", magnetometer.x, magnetometer.y, magnetometer.z);
+            //TODO: Pass pointers
             comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
             last_mag_read = millis();
         }
@@ -149,7 +144,6 @@ void loop(){
     unsigned long looptime = millis() - ptimep;
     Serial.print("Tiempo LOOP: ");
     Serial.println(looptime);
-}
 
     
     if (millis() > tNextLed) {
@@ -173,7 +167,6 @@ void loop(){
         FastLED.show();
         tNextOff = millis()+ 999999999;
       
-        comms_debug("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
         next_sensors_read = millis() + sensorReadInterval;
     }
     // TODO: Read battery voltage
