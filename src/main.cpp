@@ -33,13 +33,19 @@ DHT22 dht22(DHT22_PIN);
 vec3_t g_destCord = {0, 0, 0};
 static CRGB leds[NUM_LEDS];
 
+
+
+
+
+
+
 void setup(){
     
     Serial.begin(9600);
     EEPROM.begin(0x80);
     Wire.begin();
     delay(2000); //Pausa para que no se asuste el IMU
- FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
+    FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
     //TODO: Add calibrate branch to main repo
     //mpu.setup(0x68);
     mpu.verbose(true);
@@ -69,6 +75,8 @@ void moveServos(vec3_t *gps_pos, float mag_hoz);
 
 
 void loop(){
+
+    unsigned long ptimep = millis();
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
     comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
@@ -136,6 +144,12 @@ void loop(){
     }
     static unsigned long tNextLed = millis();
     static unsigned long tNextOff;
+    
+    // TODO: Read battery voltage
+    unsigned long looptime = millis() - ptimep;
+    Serial.print("Tiempo LOOP: ");
+    Serial.println(looptime);
+}
 
     
     if (millis() > tNextLed) {
