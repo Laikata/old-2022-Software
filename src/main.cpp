@@ -16,14 +16,14 @@
 
 #define DHT22_PIN D4
 
-#define magReadInterval 125         //ms between magnetometer reads
-#define sensorReadInterval 500      //ms between environment sensor readout 
+#define MAG_READ_INTERVAL 125         //ms between magnetometer reads
+#define SENSOR_READ_INTERVAL 500      //ms between environment sensor readout 
 // LAT, LON, HEI
 #define DEST_COORDS 38.831541514133754, 0.10366977616384526, 0
 #define NUM_LEDS 8
 #define DATA_PIN D5
-#define PeriodoParpadeo 2000
-#define TiempoParpadeo 25 
+#define BLINK_COOLDOWN 2000
+#define BLINK_DURATION 25 
 
 
 Servos servo(5);
@@ -66,24 +66,21 @@ void setup(){
 
 void moveServos(vec3_t *gps_pos, float mag_hoz);
 
-
-
 void loop(){
+    unsigned long ptimep = millis(); // Used to time loop
 
-    unsigned long ptimep = millis();
+    // Read GPS
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
     comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
 
-    // Recibir datos sensores
-
     static float north_dir = 0;
 
-    static uint32_t next_mag_read = millis() + magReadInterval;
-    static uint32_t last_mag_read = millis();
-    if (millis() > next_mag_read) {
+    // Read IMU
+    static unsigned long next_mag_read = millis();
+    if (next_mag_read <= millis()) {
         if(mpu.update()) {
-            next_mag_read = millis() + magReadInterval;
+            next_mag_read = millis() + MAG_READ_INTERVAL;
             vec3_t magnetometer = {mpu.getMagX(), mpu.getMagY(), mpu.getMagZ()};
             north_dir = imu_magHoz(magnetometer.x, magnetometer.y);
             vec3_t gyroscope = {mpu.getGyroX(), mpu.getGyroY(), mpu.getGyroZ()};
@@ -92,87 +89,69 @@ void loop(){
             comms_debug("MAGN: (%g, %g, %g)\n", magnetometer.x, magnetometer.y, magnetometer.z);
             //TODO: Pass pointers
             comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
-            last_mag_read = millis();
-        }
-        if(millis()> last_mag_read + 2000){
+            leds[4] = CRGB::Green;
+        } else if(millis() > next_mag_read + 2000){
             leds[4] = CRGB::Red;
         }
-        else {
-            leds[4] = CRGB::Green;
-        }
-        
     }
-
-
     
+
     moveServos(&can_position, north_dir);
     //float rotation = nav_angle(&can_position, &g_destCord, north_dir);
 
-    //   1. Voltaje bateria
-    //   2. Temperatura
-    //   3. Presión
-    // TODO: Read battery voltage
-
-
-    static float VBat = -1.f;
-    static bool VDht22 = true;
-    static uint32_t next_sensors_read = millis() + sensorReadInterval;
-    static uint32_t last_dht_read = millis();
-    if(millis() > next_sensors_read) {  
-        float VRead = analogRead(A0);
-        VBat = VRead * 4.7/1023; //150k resistor in series
-        VDht22 = dht22.available();      
-        if (VDht22 == true){
-            last_dht_read = millis();
+    
+    static float BatV = 0;
+    static unsigned long next_sensors_read = millis();
+    
+    if(millis() >= next_sensors_read) {
+        //Read DHT22
+        static unsigned long dht22_last_read = 0;
+        if(dht22.available()) {
+            float temperature = dht22.readTemperature();
+            float pressure = bmp.readPressure();
+            float humidity = dht22.readHumidity();
+            comms_env(temperature, humidity, pressure);
             leds[6] = CRGB::Green;
-        }else if(millis() > last_dht_read + 5000){
+            dht22_last_read = millis();
+        } 
+        else if(millis() > dht22_last_read + 2000){
             leds[6] = CRGB::Red;
         }
 
-        float temperature = dht22.readTemperature(); // Do we read temp from the BMP085 or the DHT22?
-        float pressure = bmp.readPressure();
-        float humidity = dht22.readHumidity();
-        comms_env(temperature, humidity, pressure);
-        //hacer tx bateria
-        Serial.printf("Sensores: Temp/press/hum/VBat(%g, %g, %g, %g)", temperature, pressure, humidity,VBat);
-        next_sensors_read = millis() + sensorReadInterval;
+        //Read battery voltage
+        BatV = analogRead(A0) * 4.7/1023; //150k resistor in series
+        comms_bat(BatV);
+
+        next_sensors_read = millis() + SENSOR_READ_INTERVAL;
     }
-    static unsigned long tNextLed = millis();
+
+    static unsigned long tNextBlink = millis();
     static unsigned long tNextOff;
     
-    // TODO: Read battery voltage
-    unsigned long looptime = millis() - ptimep;
-    Serial.print("Tiempo LOOP: ");
-    Serial.println(looptime);
-
-    
-    if (millis() > tNextLed) {
-        tNextLed = millis() + PeriodoParpadeo;
-        if (VBat >= 3.8) {
+    if (millis() >= tNextBlink) {
+        tNextBlink = millis() + BLINK_COOLDOWN;
+        if (BatV >= 3.8) {
             leds[0] = CRGB::Green;
-        }else if (VBat > 3.6) {
+        }else if (BatV > 3.6) {
             leds[0] = CRGB::Orange;
         }else {
             leds[0] = CRGB::Red;
         }
         FastLED.show();
-        tNextOff = millis() + TiempoParpadeo;
+        tNextOff = millis() + BLINK_DURATION;
 
     }
-    if (millis()>tNextOff){
+    if (millis() >= tNextOff){
         for (int i = 0; i < 8; i++)
         {
             leds[i] = CRGB::Black;
         }
         FastLED.show();
-        tNextOff = millis()+ 999999999;
-      
-        next_sensors_read = millis() + sensorReadInterval;
     }
-    // TODO: Read battery voltage
+
+    unsigned long looptime = millis() - ptimep;
+    comms_debug("Loop took %lu ms", looptime);
 }
-
-
 
 void moveServos(vec3_t *gps_pos, float mag_hoz){
     float direction;
