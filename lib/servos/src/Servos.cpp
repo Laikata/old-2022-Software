@@ -31,24 +31,26 @@ Servos::Servos(int ServosVelocity) {
 }
 
 void Servos::angleRight(int angle) {
-    Serial.printf("AngleRightBeforeMAP: %i\n", angle);
+    //Serial.printf("AngleRightBeforeMAP: %i\n", angle);
     actualTime = millis();
     angle = constrain(map(angle, 0, 100, 30, 160),30,160);
-    Serial.printf("AngleRightAfterMAP: %i\n", angle);
+    //Serial.printf("AngleRightAfterMAP: %i\n", angle);
     if((actualTime - lastTimeRight) > interval){
 
         lastTimeRight = actualTime;
-        servoRight.write(constrain(angle,lastAngleRight-velocity,lastAngleRight+velocity));  
+        //unsigned long writeTime = millis();
+        servoRight.write(constrain(angle,lastAngleRight-velocity,lastAngleRight+velocity)); 
+        //Serial.printf("SERVOWRITE %lu\n", millis() - writeTime); 
         lastAngleRight = angle;
 
     }
 }
 
 void Servos::angleLeft(int angle) {
-    Serial.printf("AngleRightBeforeMAP: %i\n", angle);
+    //Serial.printf("AngleRightBeforeMAP: %i\n", angle);
     actualTime = millis();
     angle = constrain(map(angle, 0, 100, 160, 25), 25, 160);
-    Serial.printf("AngleRightAfterMAP: %i\n", angle);
+    //Serial.printf("AngleRightAfterMAP: %i\n", angle);
     if((actualTime - lastTimeLeft) > interval){
 
         lastTimeLeft = actualTime;

@@ -17,5 +17,5 @@ float vec3_deg(vec3_t *vec){
         exit(1);
         return (float)0;
     }
-    return atan(vec->y/vec->x);
+    return atan2(vec->y, vec->x);
 }

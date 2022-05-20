@@ -4,20 +4,26 @@
 static const uint32_t GPSBaud = 9600;
 
 // The TinyGPSPlus object
-TinyGPSPlus gps;
+extern TinyGPSPlus gps;
 
 SoftwareSerial gpsSerial (D6, D7);
 
 void displayInfo();
 
 vec3_t gps_position(){
-    while(gpsSerial.available()>0){
-        if (gps.encode(gpsSerial.read() ) )
-            displayInfo();
-    }
     vec3_t pos = {gps.location.lng(), gps.location.lat(), gps.altitude.meters()};
+    #ifdef DEBUG
     Serial.printf("GPS_DIRECTO: (%g, %g, %g)\n", gps.location.lng(), gps.location.lat(), gps.altitude.meters());
+    #endif
     return pos;
+}
+
+void gps_update(){
+  while(gpsSerial.available()>0){
+      if (gps.encode(gpsSerial.read() ) ){
+          //displayInfo();
+      }
+  }
 }
 
 int gps_satellites(){
@@ -25,7 +31,8 @@ int gps_satellites(){
 }
 
 void gps_init(){
-    gpsSerial.begin(GPSBaud);
+  gpsSerial.begin(GPSBaud);
+  //TODO: Disable unneeded data
 }
 
 void displayInfo()
