@@ -26,7 +26,7 @@
 #define BLINK_DURATION 25 
 
 
-Servos servo(5);
+Servos servo(45);
 MPU9250 mpu;
 Adafruit_BMP085 bmp;
 DHT22 dht22(DHT22_PIN);
@@ -69,7 +69,7 @@ void loop(){
     // Read GPS
     vec3_t can_position = gps_position();
     comms_gps(can_position.x, can_position.y, can_position.z);
-    comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
+    //comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
 
     static float north_dir = 0;
 
@@ -154,22 +154,31 @@ void loop(){
 void moveServos(vec3_t *gps_pos, float mag_hoz){
     float direction;
     float realDirection = 0;
+    float error = 0;
     static LowPassFilter lowPass;
 
     calculate_direction(&direction, DEST_COORDS, gps_pos->x, gps_pos->y, 0);
     
     realDirection = lowPass.low_pass(mag_hoz);
-    direction = map(direction, 0, 2 * PI, 0, 360);
+    //direction = map(direction, 0, 2 * PI, 0, 360);
 
-    direction = direction - realDirection;
-    comms_debug("DIR: %g\n", direction);
+    error = ErrorDireccion(direction, realDirection);
+
+    /*comms_debug("DIR: %g\n", direction);
     comms_debug("REALDIR: %g\n", realDirection);
-    comms_debug("MAGHOZ: %g\n", mag_hoz);
+    comms_debug("MAGHOZ: %g\n", mag_hoz);*/
+    Serial.printf("DIR: %g\n", direction);
+    Serial.printf("REALDIR: %g\n", realDirection);
+    ///comms_debug("MAGHOZ: %g\n", mag_hoz);
+    Serial.printf("ERROR: %g\n", error);
 
-    float mappedDirection = map(direction, -180, 180, -50, 50);
+    float mappedDirection = error * 0.5;
+    //qwertyuiop
 
-    servo.angleRight(50 + mappedDirection);
-    servo.angleLeft(50 - mappedDirection);
+    ///comms_debug("MAPPEDDIR %g\n", mappedDirection);
 
-    comms_debug("%f	", direction);
+    servo.angleRight(50 + int(mappedDirection));
+    servo.angleLeft(50 - int(mappedDirection));
+
+    ///comms_debug("%f	", direction);
 }

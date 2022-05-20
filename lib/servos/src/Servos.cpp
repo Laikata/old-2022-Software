@@ -31,41 +31,32 @@ Servos::Servos(int ServosVelocity) {
 }
 
 void Servos::angleRight(int angle) {
+    Serial.printf("AngleRightBeforeMAP: %i\n", angle);
     actualTime = millis();
     angle = constrain(map(angle, 0, 100, 30, 160),30,160);
-    if(angle > lastAngleRight && (actualTime - lastTimeRight) > interval){
+    Serial.printf("AngleRightAfterMAP: %i\n", angle);
+    if((actualTime - lastTimeRight) > interval){
 
         lastTimeRight = actualTime;
-        servoRight.write(lastAngleRight + velocity);  
-        lastAngleRight = lastAngleRight + velocity;
+        servoRight.write(constrain(angle,lastAngleRight-velocity,lastAngleRight+velocity));  
+        lastAngleRight = angle;
 
-    }
-    else if(angle < lastAngleRight && (actualTime - lastTimeRight) > interval){
-
-        lastTimeRight = actualTime;
-        servoRight.write(lastAngleRight - velocity);   
-        lastAngleRight = lastAngleRight - velocity;
-        
     }
 }
 
 void Servos::angleLeft(int angle) {
+    Serial.printf("AngleRightBeforeMAP: %i\n", angle);
     actualTime = millis();
     angle = constrain(map(angle, 0, 100, 160, 25), 25, 160);
-    if(angle > lastAngleLeft && (actualTime - lastTimeLeft) > interval){
+    Serial.printf("AngleRightAfterMAP: %i\n", angle);
+    if((actualTime - lastTimeLeft) > interval){
 
         lastTimeLeft = actualTime;
-        servoLeft.write(lastAngleLeft + velocity);  
-        lastAngleLeft = lastAngleLeft + velocity;
+        servoLeft.write(constrain(angle,lastAngleLeft-velocity,lastAngleLeft+velocity));  
+        lastAngleLeft = angle;
 
     }
-    else if(angle < lastAngleLeft && (actualTime - lastTimeLeft) > interval){
-
-        lastTimeLeft = actualTime;
-        servoLeft.write(lastAngleLeft - velocity);   
-        lastAngleLeft = lastAngleLeft - velocity;
-        
-    }
+    
 }
 
 void Servos::attach(){
