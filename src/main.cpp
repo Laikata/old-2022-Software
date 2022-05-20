@@ -128,6 +128,8 @@ void loop(){
         next_sensors_read = millis() + SENSOR_READ_INTERVAL;
         float VRead = analogRead(A0);
         BatV = VRead * 4.7/1023; //150k resistor in series  
+        comms_bat(BatV);
+        
         if (dht22.available() == true){
             last_dht_read = millis();
             leds[6] = CRGB::Green;
