@@ -29,7 +29,10 @@ void comms_send(uint8_t data[], uint8_t data_length){
 	packet[2 + data_length + 4] = checksum & 0xff;
 
 	counter++; // This will overflow and that is okay
-	Serial.write(packet, packet_size);
+	// Discard package if there isn't space for writing
+	if(Serial.availableForWrite() >= packet_size) {
+		Serial.write(packet, packet_size);
+	}
 }
 
 // This should work but I'm not really sure...
