@@ -31,7 +31,7 @@
 #define BLINK_DURATION 25 
 #define ERROR_MULTIPLICATION 0.8
 /////IMPORTANTE IR CAMBIANDO PARA ENCONTRAR LA BUENA YERAY
-#define KP 0.9
+#define KP 1.5
 #define KD 0.5
 
 
@@ -241,7 +241,7 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     realDirection = lowPass.low_pass(mag_hoz);
     //direction = map(direction, 0, 2 * PI, 0, 360);
 
-    error = -0.7 * ErrorDireccion(realDirection, direction);
+    error = -ErrorDireccion(realDirection, direction);
     
 
     #ifdef DEBUG
@@ -258,8 +258,8 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
 
     ///comms_debug("MAPPEDDIR %g\n", mappedDirection);
 
-    servo.angleRight(50 + (int)mappedDirection);
-    servo.angleLeft(50 - (int)mappedDirection);
+    servo.angleRight(100 + (int)mappedDirection);
+    servo.angleLeft(100 - (int)mappedDirection);
 
     ///comms_debug("%f	", direction);
 }
