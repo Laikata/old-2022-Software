@@ -1,10 +1,24 @@
-#include "MPU9250.h"
+#include <vector.h>
+#include <gps.h>
+#include <servos.h>
+#include <dir.h>
+#include <Arduino.h>
+#include <Servo.h>
+#include <comms.h>
+#include <Adafruit_BMP085.h>
+#include <ErriezDHT22.h>
+#include <MPU9250.h>
+#include <imu.h>
 #include "eeprom_utils.h"
+#include <LowPass.h>
+#include <FastLED.h>
+#include <SoftwareSerial.h>
 
 MPU9250 mpu;
+void print_calibration();
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(9600);
     Wire.begin();
     delay(2000);
 

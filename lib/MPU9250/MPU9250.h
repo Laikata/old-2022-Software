@@ -93,7 +93,7 @@ class MPU9250_ {
     float mag_bias_factory[3] {0., 0., 0.};
     float mag_bias[3] {0., 0., 0.};  // mag calibration value in MAG_OUTPUT_BITS: 16BITS
     float mag_scale[3] {1., 1., 1.};
-    float magnetic_declination = -7.51;  // Japan, 24th June
+    float magnetic_declination = 0.9;  // Japan, 24th June
 
     // Temperature
     int16_t temperature_count {0};  // temperature raw count output
@@ -759,8 +759,8 @@ private:
         for (uint16_t ii = 0; ii < sample_count; ii++) {
             read_mag(mag_temp);  // Read the mag data
             for (int jj = 0; jj < 3; jj++) {
-                if (mag_temp[jj] > mag_max[jj]) mag_max[jj] = mag_temp[jj];
-                if (mag_temp[jj] < mag_min[jj]) mag_min[jj] = mag_temp[jj];
+                if (mag_temp[jj] > mag_max[jj] && mag_temp[jj]!= 0) mag_max[jj] = mag_temp[jj];
+                if (mag_temp[jj] < mag_min[jj] && mag_temp[jj]!= 0) mag_min[jj] = mag_temp[jj];
             }
             if (MAG_MODE == 0x02) delay(135);  // at 8 Hz ODR, new mag data is available every 125 ms
             if (MAG_MODE == 0x06) delay(12);   // at 100 Hz ODR, new mag data is available every 10 ms

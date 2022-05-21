@@ -12,10 +12,6 @@ vec3_t vec3_sub(vec3_t *a, vec3_t *b){
 }
 
 float vec3_deg(vec3_t *vec){
-    if(vec->x == 0){
-        printf("ERROR: vector x component is 0\n");
-        exit(1);
-        return (float)0;
-    }
+
     return atan2(vec->y, vec->x);
 }

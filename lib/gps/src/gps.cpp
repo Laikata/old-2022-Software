@@ -13,8 +13,9 @@ void displayInfo();
 vec3_t gps_position(){
     vec3_t pos = {gps.location.lng(), gps.location.lat(), gps.altitude.meters()};
     #ifdef DEBUG
-    Serial.printf("GPS_DIRECTO: (%g, %g, %g)\n", gps.location.lng(), gps.location.lat(), gps.altitude.meters());
+    
     #endif
+    //Serial.printf("GPS_DIRECTO: (%g, %g, %g)\n", gps.location.lng(), gps.location.lat(), gps.altitude.meters());
     return pos;
 }
 

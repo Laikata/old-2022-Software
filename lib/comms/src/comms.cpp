@@ -36,7 +36,7 @@ void comms_send(uint8_t data[], uint8_t data_length){
 		Serial.write(packet, packet_size);
 	} else {
 		lost_packets++;
-		Serial.printf("LOST PACKETS %i\n", lost_packets);
+		//Serial.printf("LOST PACKETS %i\n", lost_packets);
 	}
 }
 

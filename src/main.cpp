@@ -21,11 +21,18 @@
 #define SENSOR_READ_INTERVAL 500      //ms between environment sensor readout
 
 // LAT, LON, HEI
-#define DEST_COORDS 38.831541514133754, 0.10366977616384526, 0
+//#define DEST_COORDS  0.103451, 50.0, 0  
+#define DEST_COORDS  0.10327, 38.81517, 0  
+//0.103451, 38.8345
+//#define ACT_COORDS 38.892754502280750, 0.0, 0
 #define NUM_LEDS 8
 #define DATA_PIN D5
 #define BLINK_COOLDOWN 2000
 #define BLINK_DURATION 25 
+#define ERROR_MULTIPLICATION 0.8
+/////IMPORTANTE IR CAMBIANDO PARA ENCONTRAR LA BUENA YERAY
+#define KP 0.9
+#define KD 0.5
 
 
 Servos servo(45);
@@ -42,7 +49,11 @@ void setup(){
     EEPROM.begin(0x80);
     Wire.begin();
     delay(2000); //Pausa para que no se asuste el IMU
-    FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
+    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+    //BRG,BGR GBR RGB
+    //RGB
+    //
+
 
     #ifdef DEBUG
     mpu.verbose(true); //TODO: remove this for final build
@@ -74,9 +85,17 @@ void loop(){
     // Read GPS
     static vec3_t can_position = {0, 0, 0};
     gps_update();
+    static uint32_t last_gps_read = millis();
+    static uint32_t next_gps_read = millis();
+
     if(gps.location.isUpdated()) {
         can_position = gps_position();
         comms_gps(can_position.x, can_position.y, can_position.z);
+        last_gps_read = millis();
+        leds[2] = CRGB::Green;
+    } else if ( millis() > last_gps_read + 3000){
+        leds[2] = CRGB::Red;
+        //last_gps_read = millis() + 99999;
     }
     
     //comms_debug("PosGPS: (%g, %g, %g)\n", can_position.x, can_position.y, can_position.z);
@@ -105,9 +124,9 @@ void loop(){
 
             #ifdef DEBUG
             Serial.printf("MAGN: (%g, %g, %g)\n", magnetometer.x, magnetometer.y, magnetometer.z);
+            Serial.printf("NORTHDIR: %g\n", north_dir);
             #endif
-            //TODO: Pass pointers
-            comms_imu(magnetometer, gyroscope, accelerometer, north_dir);
+            
             leds[4] = CRGB::Green;
         } else if(millis() > next_imu_read + 2000){
             leds[4] = CRGB::Red;
@@ -124,7 +143,13 @@ void loop(){
     static uint32_t last_dht_read = millis();
     static float BatV = -1.f;
     unsigned long Sensortime = millis();
+
     if(millis() >= next_sensors_read) {
+        if(servo.isAttached() == true){
+            leds[7] = CRGB::Green;
+        }else{
+            leds[7] = CRGB::Red;
+        }
         next_sensors_read = millis() + SENSOR_READ_INTERVAL;
         float VRead = analogRead(A0);
         BatV = VRead * 4.7/1023; //150k resistor in series  
@@ -135,7 +160,7 @@ void loop(){
             leds[6] = CRGB::Green;
         }else if(millis() > last_dht_read + 5000){
             leds[6] = CRGB::Red;
-            last_dht_read += 99999999;
+            //last_dht_read += 99999999;
         }
 
         float temperature = dht22.readTemperature();
@@ -184,7 +209,7 @@ void loop(){
     #endif
     unsigned long looptime = millis() - ptimep;
     ptimep = millis();
-    Serial.printf("Loop took %lu ms\n", looptime);
+    //Serial.printf("Loop took %lu ms\n", looptime);
 }
 
 float ErrorDireccion(float bearing, float target){
@@ -193,6 +218,16 @@ float ErrorDireccion(float bearing, float target){
     if(error > 180) error -= 360;
     else if(error < -180) error += 360;
     return error;
+}
+
+float PDError (float direction, float realDirection){
+    float error = 0;
+    float dev = 0;
+    float pastError = 0;
+    error = ErrorDireccion(direction, realDirection);
+    dev = error - pastError;
+    pastError = error;
+    return error * KP + dev * KD;
 }
 
 void moveServos(vec3_t *gps_pos, float mag_hoz){
@@ -206,15 +241,19 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     realDirection = lowPass.low_pass(mag_hoz);
     //direction = map(direction, 0, 2 * PI, 0, 360);
 
-    error = ErrorDireccion(direction, realDirection);
+    error = -0.7 * ErrorDireccion(realDirection, direction);
+    
 
     #ifdef DEBUG
+    Serial.printf("ERROR: %g\n", error);
     Serial.printf("DIR: %g\n", direction);
     Serial.printf("REALDIR: %g\n", realDirection);
-    Serial.printf("ERROR: %g\n", error);
+    Serial.printf("PosGPS: (%g, %g, %g)\n", gps_pos->x, gps_pos->y, gps_pos->z);
     #endif
 
-    float mappedDirection = error * 0.5;
+
+
+    float mappedDirection = error * KP;
     //qwertyuiop
 
     ///comms_debug("MAPPEDDIR %g\n", mappedDirection);
