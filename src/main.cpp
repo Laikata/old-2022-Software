@@ -254,7 +254,6 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
 
 
     float mappedDirection = error * KP;
-    //qwertyuiop
 
     ///comms_debug("MAPPEDDIR %g\n", mappedDirection);
 
