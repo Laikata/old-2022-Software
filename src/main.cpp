@@ -22,7 +22,8 @@
 
 // LAT, LON, HEI
 //#define DEST_COORDS  0.103451, 50.0, 0  
-#define DEST_COORDS  0.10327, 38.81517, 0  
+#define DEST_COORDS  -3.683573, 37.298157, 0  
+#define SEA_LEVEL_PRESSURE 101325
 //0.103451, 38.8345
 //#define ACT_COORDS 38.892754502280750, 0.0, 0
 #define NUM_LEDS 8
@@ -42,6 +43,7 @@ Adafruit_BMP085 bmp;
 DHT22 dht22(DHT22_PIN);
 vec3_t g_destCord = {0, 0, 0};
 static CRGB leds[NUM_LEDS];
+bool isInSky = false;
 
 void setup(){
     
@@ -74,6 +76,8 @@ void setup(){
     loadCalibration();
     printCalibration();
     delay(1000);
+
+    
 }
 
 void moveServos(vec3_t *gps_pos, float mag_hoz);
@@ -166,6 +170,7 @@ void loop(){
         float temperature = dht22.readTemperature();
         float pressure = bmp.readPressure();
         float humidity = dht22.readHumidity();
+        float altitude = 44330 * (1 - pow(pressure/SEA_LEVEL_PRESSURE, 1/5.255));
         comms_env(temperature, humidity, pressure);
     }
     Sensortime = millis() - Sensortime;
