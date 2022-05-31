@@ -33,7 +33,7 @@ Servos::Servos(int ServosVelocity) {
 void Servos::angleRight(int angle) {
     //Serial.printf("AngleRightBeforeMAP: %i\n", angle);
     actualTime = millis();
-    angle = constrain(map(angle, 0, 100, 30, 160),30,160);
+    angle = constrain(map(angle, 0, 100, 40, 150),40, 150);
     //Serial.printf("AngleRightAfterMAP: %i\n", angle);
     if((actualTime - lastTimeRight) > interval){
 
@@ -49,7 +49,7 @@ void Servos::angleRight(int angle) {
 void Servos::angleLeft(int angle) {
     //Serial.printf("AngleRightBeforeMAP: %i\n", angle);
     actualTime = millis();
-    angle = constrain(map(angle, 0, 100, 160, 25), 25, 160);
+    angle = constrain(map(angle, 0, 100, 150, 35), 35, 150);
     //Serial.printf("AngleRightAfterMAP: %i\n", angle);
     if((actualTime - lastTimeLeft) > interval){
 

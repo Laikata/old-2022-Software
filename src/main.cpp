@@ -22,7 +22,7 @@
 
 // LAT, LON, HEI
 //#define DEST_COORDS  0.103451, 50.0, 0  
-#define DEST_COORDS  -3.683573, 37.298157, 0  
+#define DEST_COORDS  -3.683591, 37.29819, 0  
 #define SEA_LEVEL_PRESSURE 101325
 //0.103451, 38.8345
 //#define ACT_COORDS 38.892754502280750, 0.0, 0
@@ -170,7 +170,7 @@ void loop(){
         float temperature = dht22.readTemperature();
         float pressure = bmp.readPressure();
         float humidity = dht22.readHumidity();
-        float altitude = 44330 * (1 - pow(pressure/SEA_LEVEL_PRESSURE, 1/5.255));
+        //float altitude = 44330 * (1 - pow(pressure/SEA_LEVEL_PRESSURE, 1/5.255));
         comms_env(temperature, humidity, pressure);
     }
     Sensortime = millis() - Sensortime;
@@ -255,7 +255,6 @@ void moveServos(vec3_t *gps_pos, float mag_hoz){
     Serial.printf("REALDIR: %g\n", realDirection);
     Serial.printf("PosGPS: (%g, %g, %g)\n", gps_pos->x, gps_pos->y, gps_pos->z);
     #endif
-
 
 
     float mappedDirection = error * KP;
