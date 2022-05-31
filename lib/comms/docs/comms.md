@@ -1,4 +1,4 @@
-# Communication protocol v2.0
+# Communication protocol v2.1
 
 ## Base packet
 A packet is composed by five parts:
@@ -15,8 +15,8 @@ A packet is composed by five parts:
 All subprotocols are wrapped in the base packet and its first byte defines which kind of packet it is.
 ### GPS
 - Identifier: `0x01`
-- Size: `13 bytes`
-- Structure: `0x01 Latitude(float) Longitude(float) Altitude(float)`
+- Size: `25 bytes`
+- Structure: `0x01 Latitude(double) Longitude(double) Altitude(double)`
 
 ### IMU
 - Identifier: `0x02`

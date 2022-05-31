@@ -76,6 +76,6 @@ static const uint32_t crc_table[256] = {
 void comms_send(uint8_t data[], uint8_t data_length);
 void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz);
 void comms_env(float temp, float humidity, float pressure);
-void comms_gps(float longitude, float latitude, float altitude);
+void comms_gps(double longitude, double latitude, double altitude);
 void comms_bat(float voltage);
 void comms_debug(const char msg[], ...);

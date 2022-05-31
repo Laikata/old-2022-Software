@@ -10,8 +10,8 @@ SoftwareSerial gpsSerial (D6, D7);
 
 void displayInfo();
 
-vec3_t gps_position(){
-    vec3_t pos = {gps.location.lng(), gps.location.lat(), gps.altitude.meters()};
+dvec3_t gps_position(){
+    dvec3_t pos = {gps.location.lng(), gps.location.lat(), gps.altitude.meters()};
     #ifdef DEBUG
     
     #endif

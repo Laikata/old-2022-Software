@@ -61,6 +61,32 @@ inline float BigEndianFloat(float value) {
 #endif
 }
 
+double ReverseDouble(double value) {
+    union {
+    double f;
+    uint64_t i;
+  } x = {.f = value};
+
+  return ( (x.i << 56) & 0xff00000000000000UL ) |
+    ( (x.i << 40) & 0x00ff000000000000UL ) |
+    ( (x.i << 24) & 0x0000ff0000000000UL ) |
+    ( (x.i <<  8) & 0x000000ff00000000UL ) |
+    ( (x.i >>  8) & 0x00000000ff000000UL ) |
+    ( (x.i >> 24) & 0x0000000000ff0000UL ) |
+    ( (x.i >> 40) & 0x000000000000ff00UL ) |
+    ( (x.i >> 56) & 0x00000000000000ffUL );  
+}
+
+inline double BigEndianDouble(double value) {
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+  return ReverseDouble(value);
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  return value;
+#else
+# error Unsupported endianness
+#endif
+}
+
 void comms_imu(vec3_t mag, vec3_t accel, vec3_t gyro, float hoz) {
 	static const int data_size = sizeof(uint8_t) + (sizeof(vec3_t) * 3) + sizeof(float);
 	uint8_t data[data_size];
@@ -97,18 +123,18 @@ void comms_env(float temp, float humidity, float pressure) {
 	comms_send(data, data_size);
 }
 
-void comms_gps(float longitude, float latitude, float altitude) {
-	static const int data_size = sizeof(uint8_t) + sizeof(float) * 3;
+void comms_gps(double longitude, double latitude, double altitude) {
+	static const int data_size = sizeof(uint8_t) + sizeof(double) * 3;
 	uint8_t data[data_size];
 
-	float bige_lon = BigEndianFloat(longitude);
-	float bige_lat = BigEndianFloat(latitude);
-	float bige_alt = BigEndianFloat(altitude);
+	double bige_lon = BigEndianDouble(longitude);
+	double bige_lat = BigEndianDouble(latitude);
+	double bige_alt = BigEndianDouble(altitude);
 
 	data[0] = 0x01;
-	memcpy(&data[1], &bige_lon, sizeof(float));
-	memcpy(&data[5], &bige_lat, sizeof(float));
-	memcpy(&data[9], &bige_alt, sizeof(float));
+	memcpy(&data[1], &bige_lon, sizeof(double));
+	memcpy(&data[9], &bige_lat, sizeof(double));
+	memcpy(&data[17], &bige_alt, sizeof(double));
 
 	comms_send(data, data_size);
 }

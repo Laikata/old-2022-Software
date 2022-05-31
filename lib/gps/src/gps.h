@@ -6,7 +6,7 @@
 #include <comms.h>
 #include <SoftwareSerial.h>
 
-vec3_t gps_position();
+dvec3_t gps_position();
 int gps_satellites();
 void gps_init();
 void gps_update();

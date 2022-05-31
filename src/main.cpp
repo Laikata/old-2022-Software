@@ -76,18 +76,17 @@ void setup(){
     loadCalibration();
     printCalibration();
     delay(1000);
-
     
 }
 
-void moveServos(vec3_t *gps_pos, float mag_hoz);
+void moveServos(dvec3_t *gps_pos, float mag_hoz);
 
 void loop(){
     unsigned long static ptimep = millis(); // Used to time loop
     unsigned long gpstime = millis();
 
     // Read GPS
-    static vec3_t can_position = {0, 0, 0};
+    static dvec3_t can_position = {0, 0, 0};
     gps_update();
     static uint32_t last_gps_read = millis();
     static uint32_t next_gps_read = millis();
@@ -235,7 +234,7 @@ float PDError (float direction, float realDirection){
     return error * KP + dev * KD;
 }
 
-void moveServos(vec3_t *gps_pos, float mag_hoz){
+void moveServos(dvec3_t *gps_pos, float mag_hoz){
     float direction;
     float realDirection = 0;
     float error = 0;
